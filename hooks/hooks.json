@@ -1,5 +1,5 @@
 {
-  "description": "Claude Code Dev Team hooks (15 total): commit quality, cost tracking, MCP health, config protection, design quality, batch format, audit log, compact suggestion, error logging, test runner, branch protection, large file warner, session summary.",
+  "description": "Claude Code Dev Team hooks (18 total): commit quality, cost tracking, MCP health, config protection, design quality, batch format, audit log, compact suggestion, error logging, test runner, branch protection, large file warner, session summary, MemPalace session-start / stop / pre-compact.",
   "hooks": {
     "PreToolUse": [
       {
@@ -153,6 +153,23 @@
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-summary.js",
             "description": "Append session summary to ~/.claude/sessions/ for later search"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/mempal-stop.sh",
+            "description": "Mine session into MemPalace for future search (no-op if mempalace not installed)"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/mempal-precompact.sh",
+            "description": "Snapshot key context into MemPalace before Claude compresses it (no-op if mempalace not installed)"
           }
         ]
       }
@@ -163,7 +180,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '[devteam] Dev team online — 12 agents + 15 hooks active. Three red lines: closure discipline, fact-driven, exhaustiveness.' >&2; exit 0"
+            "command": "echo '[devteam] Dev team online — 12 agents + 18 hooks active. Three red lines: closure discipline, fact-driven, exhaustiveness.' >&2; exit 0"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/mempal-session-start.sh",
+            "description": "Surface MemPalace status + cwd-matching memories at session boot (no-op if mempalace not installed)"
           }
         ]
       }

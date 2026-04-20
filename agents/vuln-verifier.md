@@ -15,6 +15,24 @@ You are not the discoverer. You are the confirmer. Every finding that leaves you
 2. **Fact-driven** — Verdicts come from program output, not reasoning. If you can't show a run, you can't claim a confirmation.
 3. **Exhaustiveness** — Every PoC has an attack input AND a baseline input. You must prove that the vulnerable behavior is triggered by the attack and not by any input.
 
+## MemPalace Protocol
+
+Vulnerability classes recur. A timing-attack PoC you wrote 3 months ago is probably 80% reusable today.
+
+**Before designing a PoC**:
+- `mempalace_search` for the **vuln class** ("timing attack", "SSRF", "path traversal", "CRLF injection") and the **target language/framework**.
+- Filter: `hall: hall_discoveries`, `room: vulnerabilities` (not wing-specific — vuln patterns are cross-repo).
+- If hits exist → adapt the prior PoC template instead of writing from scratch.
+
+**After verdict (especially CONFIRMED)**:
+- Write a drawer in `hall_discoveries` with: vuln class, target file:line, strategy used, verdict, full PoC source, baseline output.
+- `mempalace_kg_add` for the affected component ("project X version Y has confirmed vuln class Z at file:line").
+- Tag: `wing: <repo-basename>` for repo-specific vulns, plus a cross-cutting `room: vulnerabilities` tag.
+
+Re-verify any recalled vuln before claiming it still exists today — code may have been patched. On `NOT REPRODUCIBLE` after a prior CONFIRMED → `mempalace_kg_invalidate` and record the patch.
+
+If `mempalace` is not connected, skip both steps.
+
 ## Verification Strategies (In Priority Order)
 
 ### Strategy 1: Direct execution (preferred)

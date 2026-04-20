@@ -3,7 +3,7 @@
 **[English](./README.md) · 繁體中文**
 
 > **把 Claude Code 變成一整支工程團隊**
-> — 12 位專職 agents、15 個自動化 hooks，還有讓他們保持紀律的 P7/P9/P10 方法論。
+> — 12 位專職 agents、18 個自動化 hooks（含可選的跨 session **MemPalace** 記憶層），還有讓他們保持紀律的 P7/P9/P10 方法論。
 
 大多數人把 Claude Code 當單人工程師用。這個設定把它變成一整個工程組織：**planner、fullstack-engineer、refactor-specialist、migration-engineer、frontend-designer、critic、vuln-verifier、debugger、db-expert、onboarder、tool-expert、web-researcher** — 每個 agent 負責一個角色、擁有各自的工具權限，並由嚴格的委派規則決定誰該動哪裡。
 
@@ -106,7 +106,7 @@
 
 ## 自動化（Hooks）
 
-15 個自動化 hooks 接在 `pre-commit`、`post-tool-use`、`stop` 等事件上，在問題上 production 前就攔下來。
+18 個自動化 hooks 接在 `pre-commit`、`post-tool-use`、`stop`、`pre-compact`、`session-start` 等事件上，在問題上 production 前就攔下來 — 並（可選地）讓團隊擁有跨 session 的記憶。
 
 | Hook | 觸發時機 | 攔截什麼 |
 |------|---------|---------|
@@ -125,8 +125,37 @@
 | 🔒 `branch-protection.js` | Pre-Bash | 硬擋 force push 和直接 commit 到 main / master / production |
 | 📏 `large-file-warner.js` | Pre-Read | 500 KB 警告，2 MB 阻擋，保護 context window |
 | 📚 `session-summary.js` | Stop | 把 session 摘要 append 到 `~/.claude/sessions/`，方便日後搜尋 |
+| 🧠 `mempal-session-start.sh` | SessionStart | 開機時印出 MemPalace 狀態 + 對應 cwd repo 的歷史記憶（未安裝 `mempalace` 則自動 no-op） |
+| 🧠 `mempal-stop.sh` | Stop | 把這次 session mine 進 MemPalace，供未來 session 搜尋 |
+| 🧠 `mempal-precompact.sh` | PreCompact | Claude 壓縮 context 前，把關鍵內容存進 MemPalace |
 
 每個 hook 都是獨立腳本。透過 `settings.example.json` 啟用 / 關閉 / 自訂。
+
+---
+
+## 跨 Session 記憶（可選，搭配 MemPalace）
+
+預設情況下團隊在 session 之間沒有記憶 — 每次對話都從零開始。安裝 [**MemPalace**](https://github.com/marc-ai/mempalace)（一個可搜尋的記憶 MCP server）後，團隊得到：
+
+- **`onboarder` 回憶起**上週做過的這個 codebase map — 只重新掃描變動的部分
+- **`debugger` 回憶起**同樣 error message 過去的根因 — 第一個假設就是已驗證的修法
+- **`critic` 回憶起**這些檔案過去的安全發現 — 容易回歸的點先重查
+- **`migration-engineer` 回憶起**上次任何 repo 做 Next.js 13→14 的完整 playbook
+- **`web-researcher` 快取** API quota / spec 查詢，不會每週重抓同一頁 Gmail rate limit
+- **`frontend-designer` 避免**重複你上個專案的 brutalist landing page
+
+每個 agent 在 `agents/*.md` 開頭都有一段 **MemPalace Protocol**，定義「動工前查什麼、完工後寫什麼」。上面 3 個 lifecycle hook（`mempal-*`）負責自動化雜事：開 session 拉狀態、收 session 寫入、壓縮前快照。
+
+**安裝方式：**
+```bash
+pip install mempalace
+mempalace init
+# 然後加進 Claude Code 的 MCP 設定 — 詳見 mempalace 的 README
+```
+
+**沒裝 MemPalace 時**，所有 protocol 步驟都靜默 no-op，agent 一樣正常出貨，只是沒有跨 session 記憶。
+
+詳見 [CLAUDE.zh-TW.md](./CLAUDE.zh-TW.md#mempalace-整合跨-session-記憶) 的共通協定和 wing / hall 規範。
 
 ---
 
@@ -171,7 +200,9 @@
 /plugin install devteam@my-claude-devteam
 ```
 
-安裝完成後，12 個 agents 與 15 個 hooks 會自動註冊；重啟 Claude Code 即可生效。
+安裝完成後，12 個 agents 與 18 個 hooks 會自動註冊；重啟 Claude Code 即可生效。
+
+> 3 個 MemPalace hooks（`mempal-session-start.sh`、`mempal-stop.sh`、`mempal-precompact.sh`）預設就會接好，但**未安裝 `mempalace` 時自動 no-op**。安裝 MemPalace 即啟用跨 session 記憶；否則團隊行為與 15-hook 版本完全相同。
 
 ### 建議：安裝方法論文件
 

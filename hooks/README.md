@@ -2,7 +2,7 @@
 
 **English · [繁體中文](./README.zh-TW.md)**
 
-Fifteen automation hooks that run at Claude Code's lifecycle events (`PreToolUse`, `PostToolUse`, `Stop`, `SessionStart`). They catch common failure modes before they ship: hardcoded secrets, debugger statements, MCP outages, runaway cost, AI-slop UI, stale `console.log`, and more.
+Eighteen automation hooks that run at Claude Code's lifecycle events (`PreToolUse`, `PostToolUse`, `Stop`, `PreCompact`, `SessionStart`). They catch common failure modes before they ship: hardcoded secrets, debugger statements, MCP outages, runaway cost, AI-slop UI, stale `console.log`, and more — and (optionally) integrate with [**MemPalace**](https://github.com/marc-ai/mempalace) to give the team cross-session memory.
 
 Each hook is a self-contained script under 75 lines. No external dependencies beyond Node.js and standard Unix tools (`jq`, `git`, `grep`).
 
@@ -123,13 +123,31 @@ Skips the check if `offset` or `limit` is already set.
 
 Use case: search past sessions later (`grep -r "TimeoutError" ~/.claude/sessions/`) to find how you solved a problem the first time.
 
+### 🧠 `mempal-session-start.sh`
+**Fires:** `SessionStart`
+**What it does:** If the [`mempalace`](https://github.com/marc-ai/mempalace) CLI is on `$PATH`, prints a compact palace status (drawer counts, top wings) plus the top 3 memories matching the current `cwd` repo basename — straight to stderr, so they appear as a system notice in the transcript. This gives every session an instant "what did we already know about this repo?" recap.
+
+**Self-disables** when `mempalace` is not installed: `command -v mempalace` fails → `exit 0` immediately.
+
+### 🧠 `mempal-stop.sh`
+**Fires:** `Stop`
+**What it does:** Pipes the Stop event payload to `mempalace hook run --hook stop --harness claude-code` (falling back to `python3 -m mempalace …` for older versions). The palace then mines what was learned in this session into searchable drawers, ready for the next `mempal-session-start.sh` to surface.
+
+**Self-disables** when `mempalace` is not installed. Always re-emits stdin so other Stop hooks downstream see the original payload.
+
+### 🧠 `mempal-precompact.sh`
+**Fires:** `PreCompact`
+**What it does:** Snapshots important context (active bug traces, in-progress PoCs, design decisions) into the palace right before Claude Code compresses the conversation. Stops valuable work from being lost to context squashing.
+
+**Self-disables** when `mempalace` is not installed. Always re-emits stdin.
+
 ## Install
 
 ```bash
 # 1. Copy hooks to ~/.claude/hooks/
 cp hooks/*.js ~/.claude/hooks/
-cp hooks/log-error.sh ~/.claude/hooks/
-chmod +x ~/.claude/hooks/log-error.sh
+cp hooks/log-error.sh hooks/mempal-*.sh ~/.claude/hooks/
+chmod +x ~/.claude/hooks/log-error.sh ~/.claude/hooks/mempal-*.sh
 
 # 2. Copy the example settings
 cp settings.example.json ~/.claude/settings.json

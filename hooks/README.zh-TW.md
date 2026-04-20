@@ -2,7 +2,7 @@
 
 **[English](./README.md) · 繁體中文**
 
-15 個自動化 hooks，接在 Claude Code 的 lifecycle events 上（`PreToolUse`、`PostToolUse`、`Stop`、`SessionStart`），在常見問題上 production 之前就攔下來：硬編密碼、debugger 語句、MCP 斷線、成本失控、AI slop UI、漏網的 `console.log` 等。
+18 個自動化 hooks，接在 Claude Code 的 lifecycle events 上（`PreToolUse`、`PostToolUse`、`Stop`、`PreCompact`、`SessionStart`），在常見問題上 production 之前就攔下來：硬編密碼、debugger 語句、MCP 斷線、成本失控、AI slop UI、漏網的 `console.log` 等 — 並（可選地）整合 [**MemPalace**](https://github.com/marc-ai/mempalace) 給團隊跨 session 記憶。
 
 每個 hook 都是不到 75 行的獨立腳本。除了 Node.js 和標準 Unix 工具（`jq`、`git`、`grep`）之外沒有依賴。
 
@@ -123,13 +123,32 @@
 
 用途：之後搜尋過去 session（`grep -r "TimeoutError" ~/.claude/sessions/`）看當初是怎麼解決問題的。
 
+### 🧠 `mempal-session-start.sh`
+**觸發：** `SessionStart`
+**做什麼：** 若 [`mempalace`](https://github.com/marc-ai/mempalace) CLI 在 `$PATH` 上，印出簡潔的 palace 狀態（drawer 總數、主要 wing）以及前 3 個與目前 `cwd` repo basename 相符的記憶 — 走 stderr 輸出，會變成 transcript 上的系統提示。讓每個 session 開頭都自動帶出「這個 repo 之前我們已經知道什麼」的快照。
+
+**自動禁用：** 未安裝 `mempalace` 時，`command -v mempalace` 失敗 → 立即 `exit 0`。
+
+### 🧠 `mempal-stop.sh`
+**觸發：** `Stop`
+**做什麼：** 把 Stop 事件 payload pipe 給 `mempalace hook run --hook stop --harness claude-code`（舊版會自動 fallback 到 `python3 -m mempalace …`）。Palace 會把這次 session 學到的東西 mine 成可搜尋的 drawer，等下次 `mempal-session-start.sh` 撈出來。
+
+**自動禁用：** 未安裝 `mempalace` 時 no-op。永遠把 stdin 原樣 re-emit，讓下游其他 Stop hook 看得到原始 payload。
+
+### 🧠 `mempal-precompact.sh`
+**觸發：** `PreCompact`
+**做什麼：** 在 Claude Code 壓縮對話前，把重要 context（進行中的 bug trace、PoC、設計決策）快照到 palace。防止有價值的工作被 context squash 吃掉。
+
+**自動禁用：** 未安裝 `mempalace` 時 no-op。永遠 re-emit stdin。
+
 ## 安裝
 
 ```bash
 # 1. 複製 hooks 到 ~/.claude/hooks/
+# （包含 3 個 MemPalace lifecycle hooks，未安裝 mempalace 時會自動 no-op）
 cp hooks/*.js ~/.claude/hooks/
-cp hooks/log-error.sh ~/.claude/hooks/
-chmod +x ~/.claude/hooks/log-error.sh
+cp hooks/log-error.sh hooks/mempal-*.sh ~/.claude/hooks/
+chmod +x ~/.claude/hooks/log-error.sh ~/.claude/hooks/mempal-*.sh
 
 # 2. 複製範例 settings
 cp settings.example.json ~/.claude/settings.json

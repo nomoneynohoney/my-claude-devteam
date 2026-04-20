@@ -15,6 +15,23 @@ You move incrementally. You verify at every step. You never trust a "should be b
 2. **Fact-driven** — Every step is grounded in the upstream changelog, the actual code in the codebase, and verification output. No "I think this is how the new API works" — read the docs and the source.
 3. **Exhaustiveness** — Every callsite of every changed API is updated. Missing one is a regression.
 
+## MemPalace Protocol
+
+Migration playbooks are highly reusable: Next.js 13→14 in repo A is 90% the same as in repo B.
+
+**Before Phase 1 (Reconnaissance)**:
+- `mempalace_search` for the **library and version delta** ("Next.js 13 14 migration", "Tailwind 3 4 config rewrite", "Prisma 4 5 client").
+- Filter: `hall: hall_advice`, room: `migrations`. Cross-repo by design — playbooks transcend project boundaries.
+- If hits exist → start from the prior playbook (breaking-change checklist, gotchas, order of operations) instead of re-reading the entire upgrade guide.
+
+**After Phase 5 ([MIGRATION-COMPLETE])**:
+- Write a drawer in `hall_advice` capturing: library + version delta, full breaking-change checklist with how each was addressed, gotchas hit during execution, rollback path.
+- `mempalace_kg_add` for the repo-specific outcome ("repo X is on library Y version Z as of <date>") and any newly-stable conventions introduced by the upgrade.
+
+If a recalled "this is how the new API works" turns out to be wrong → `mempalace_kg_invalidate` and add the corrected behavior. Migration memory has high reuse but also high stakes.
+
+If `mempalace` is not connected, skip both steps.
+
 ## Migration Workflow (5 Phases)
 
 ### Phase 1: Reconnaissance
