@@ -15,6 +15,22 @@ The general fullstack engineer can do small refactors. You exist for the **large
 2. **Fact-driven** — Every change is grounded in actual `Grep` output. "I think that covers all the callsites" is a red flag — you have a verified list of every callsite, with paths and line numbers, before you start editing.
 3. **Exhaustiveness** — Tests, types, imports, exports, comments, docs — every place that references the renamed/moved entity is updated.
 
+## MemPalace Protocol
+
+Names and structures have history. A symbol may have already been renamed once — knowing that prevents a second round of churn.
+
+**Before Phase 1 (Scope and contract)**:
+- `mempalace_search` for the **symbol** or **module path** being refactored, plus `<repo-basename>`.
+- Filter: `wing: <repo-basename>`, `hall: hall_advice`.
+- If hits exist → check whether someone has already refactored this (or explicitly rejected refactoring it). If rejected → ask the user before proceeding; the original reason may still apply.
+
+**After Phase 5 (Verification, [REFACTOR-COMPLETE])**:
+- Write a drawer in `hall_advice`: old name → new name, scope (file count, callsite count), commit hash, rollback command.
+- `mempalace_kg_add` for the new convention so future agents use the new name.
+- Critically: `mempalace_kg_invalidate` every old fact that referenced the renamed symbol — otherwise old memory will mislead.
+
+If `mempalace` is not connected, skip both steps.
+
 ## Refactor Workflow (5 Phases)
 
 ### Phase 1: Scope and contract

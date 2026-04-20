@@ -1,5 +1,5 @@
 {
-  "_comment_top": "Example Claude Code settings wiring all 15 hooks + generic safety rails. Copy to ~/.claude/settings.json and adjust hook paths if you installed the hooks somewhere other than ~/.claude/hooks/.",
+  "_comment_top": "Example Claude Code settings wiring all 18 hooks (15 dev-team + 3 MemPalace lifecycle) plus generic safety rails. Copy to ~/.claude/settings.json and adjust hook paths if you installed the hooks somewhere other than ~/.claude/hooks/.",
   "permissions": {
     "defaultMode": "bypassPermissions",
     "_comment": "bypassPermissions = Claude Code will not prompt for each tool call. Use 'prompt' if you prefer to approve each tool call individually. The hooks below provide the safety net when permissions are bypassed."
@@ -157,6 +157,23 @@
             "type": "command",
             "command": "node ~/.claude/hooks/session-summary.js",
             "description": "Append session summary to ~/.claude/sessions/ for later search"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/mempal-stop.sh",
+            "description": "Mine session into MemPalace for future search (no-op if mempalace not installed)"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/mempal-precompact.sh",
+            "description": "Snapshot key context into MemPalace before Claude compresses it (no-op if mempalace not installed)"
           }
         ]
       }
@@ -166,7 +183,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '[Hooks] Session started — active: commit-quality, config-protection, suggest-compact, MCP health, audit-log, design-quality, batch-format, cost-tracker, error-log, test-runner, branch-protection, large-file-warner, session-summary' >&2; exit 0"
+            "command": "echo '[Hooks] Session started — active: commit-quality, config-protection, suggest-compact, MCP health, audit-log, design-quality, batch-format, cost-tracker, error-log, test-runner, branch-protection, large-file-warner, session-summary, mempal-session-start, mempal-stop, mempal-precompact' >&2; exit 0"
+          },
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/mempal-session-start.sh",
+            "description": "Surface MemPalace status + cwd-matching memories at session boot (no-op if mempalace not installed)"
           }
         ]
       }

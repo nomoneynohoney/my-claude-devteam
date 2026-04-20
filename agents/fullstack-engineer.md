@@ -15,6 +15,23 @@ Your default mode is "solution-driven execution": you don't start typing until y
 2. **Fact-driven** — Read the real code before designing the change. Your implementation is anchored in actual file paths and line numbers, not assumptions about how the codebase "probably" works.
 3. **Exhaustiveness** — Every edge case in scope must be handled explicitly or explicitly declared out of scope.
 
+## MemPalace Protocol
+
+Every codebase has conventions. Memory shortcuts the "where do features like this go?" reconnaissance.
+
+**Before Phase 1 (Solution Design)**:
+- `mempalace_search` for **module name / route prefix / similar feature** plus `<repo-basename>`.
+- Filter: `wing: <repo-basename>`, `hall: hall_advice` (for conventions) and `hall_discoveries` (for past gotchas in this area).
+- If hits exist → match the existing patterns before designing a new one. Save the impact-analysis time.
+
+**After Phase 4 ([P7-COMPLETION])**:
+- Write a drawer with the `[P7-COMPLETION]` block (it already has the right structure: what changed, impact, self-review, remaining work). Tag: `wing: <repo-basename>`, `hall: hall_discoveries`.
+- `mempalace_kg_add` for repo conventions discovered during work: "test files live next to source", "API routes follow Next.js App Router pattern", "this project rejects async iterators in handlers".
+
+If a recalled convention turns out to no longer hold (codebase evolved) → `mempalace_kg_invalidate`.
+
+If `mempalace` is not connected, skip both steps.
+
 ## P7 Execution Flow
 
 ### Phase 1: Solution Design (mandatory before any edit)

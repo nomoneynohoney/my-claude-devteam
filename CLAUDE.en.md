@@ -208,6 +208,54 @@ If Claude in Chrome (or any equivalent browser automation tool) is installed, us
 
 ---
 
+## MemPalace Integration (Memory Across Sessions)
+
+If the `mempalace` MCP server is connected, every agent operates with **persistent memory across sessions** — the team remembers what it learned in past sessions about this repo, the bugs already fixed, the vulnerabilities already verified, the schema decisions already made.
+
+If `mempalace` is unavailable, every step below is a silent no-op. Agents continue to work from current code without history. **Never block on missing memory.**
+
+### Universal Protocol (Every Agent, Every Task)
+
+1. **BEFORE work** — `mempalace_search` first. If hits exist, read them; only fall back to grepping the codebase for what's missing. Filter by `wing` (repo name) when relevant.
+2. **AFTER discovery** — write back what's worth remembering: bug root causes, verified vulnerabilities (with `file:line`), schema decisions, refactor outcomes, API quirks, design directions taken. Prefer `mempalace_kg_add` for atomic facts, raw drawers for prose context.
+3. **WHEN facts change** — `mempalace_kg_invalidate` the old fact, `mempalace_kg_add` the new. Never let stale memory mislead future sessions.
+
+### Wing / Hall Conventions
+
+| Where | What goes there |
+|-------|-----------------|
+| `wing: <repo-name>` | All facts specific to this repo (architecture, conventions, hot files) |
+| `hall_discoveries` | Bug root causes, vulnerabilities, schema gotchas, race conditions found |
+| `hall_advice` | Decisions and rationale (P7/P9 plans, refactor verdicts, design tone choices) |
+| `hall_facts` | Stable truths (API quotas, version requirements, third-party quirks) |
+| `hall_preferences` | User preferences confirmed during the work |
+
+### Per-Agent Protocol
+
+Each of the 12 agents has its own **MemPalace Protocol** section near the top of its `agents/*.md` file — role-specific search terms before, role-specific write-backs after. Read it before starting that agent's work.
+
+### Lifecycle Hooks (Automated)
+
+| Event | Hook | What it does |
+|-------|------|--------------|
+| `SessionStart` | `mempal-session-start.sh` | Prints palace status + searches drawers matching the cwd repo |
+| `Stop` | `mempal-stop.sh` | Mines the session into the palace for future search |
+| `PreCompact` | `mempal-precompact.sh` | Snapshots important context before Claude compresses it |
+
+The hooks ship in `hooks/` and are wired in `hooks/hooks.json` and `settings.example.json`. They self-disable when `mempalace` is not on `$PATH`.
+
+### When NOT to Trust Memory
+
+Memory drift is real. Before acting on a recalled fact:
+
+- If the memory names a file path → confirm it still exists via `Read` or `Glob`
+- If the memory names a function / flag / API → confirm it via `Grep` or `WebSearch`
+- If the user asks about *current* state → trust the code, not the snapshot
+
+If recalled memory conflicts with current reality: **trust reality**, then `mempalace_kg_invalidate` the stale fact.
+
+---
+
 ## Credits
 
 - **P7/P9/P10 methodology and PUA mode** are adapted from [tanweai/pua](https://github.com/tanweai/pua) (MIT License) by 探微安全实验室 (Tanwei Security Lab). The original is a full Claude Code plugin with KPI reports, leaderboards, self-evolution tracking, and a Loop mode. The full plugin is available at [openpua.ai](https://openpua.ai).

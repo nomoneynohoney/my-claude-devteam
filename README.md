@@ -3,7 +3,7 @@
 **English · [繁體中文](./README.zh-TW.md)**
 
 > **An entire engineering team for Claude Code**
-> — 12 specialized agents, 15 automation hooks, and the P7/P9/P10 methodology that keeps them disciplined.
+> — 12 specialized agents, 18 automation hooks (with optional cross-session **MemPalace** memory), and the P7/P9/P10 methodology that keeps them disciplined.
 
 Most people use Claude Code as a single coder. This config turns it into a full engineering org: **planner, fullstack-engineer, refactor-specialist, migration-engineer, frontend-designer, critic, vuln-verifier, debugger, db-expert, onboarder, tool-expert, web-researcher** — each agent owns a role, each has its own tool permissions, and a strict delegation rulebook decides who touches what.
 
@@ -106,7 +106,7 @@ The team shifts into exhaustive mode when:
 
 ## The Automation (Hooks)
 
-Fifteen automation hooks wire up at `pre-commit`, `post-tool-use`, and `stop` events. They catch problems before they ship.
+Eighteen automation hooks wire up at `pre-commit`, `post-tool-use`, `stop`, `pre-compact`, and `session-start` events. They catch problems before they ship — and (optionally) give the team memory across sessions.
 
 | Hook | Trigger | What it catches |
 |------|---------|-----------------|
@@ -125,8 +125,37 @@ Fifteen automation hooks wire up at `pre-commit`, `post-tool-use`, and `stop` ev
 | 🔒 `branch-protection.js` | Pre-Bash | Hard-blocks force pushes and direct commits to main / master / production / release |
 | 📏 `large-file-warner.js` | Pre-Read | Warns at 500 KB, blocks at 2 MB to protect context window |
 | 📚 `session-summary.js` | Stop | Appends session summary to `~/.claude/sessions/` for later search |
+| 🧠 `mempal-session-start.sh` | SessionStart | Surfaces MemPalace status + prior memories matching the cwd repo (no-op if `mempalace` not installed) |
+| 🧠 `mempal-stop.sh` | Stop | Mines the just-ended session into MemPalace for future search |
+| 🧠 `mempal-precompact.sh` | PreCompact | Snapshots key context into MemPalace before Claude compresses it |
 
 Each hook is a self-contained script. Enable / disable / customize in `settings.example.json`.
+
+---
+
+## Cross-Session Memory (Optional, via MemPalace)
+
+By default the team has no memory between sessions — every conversation starts cold. If you install [**MemPalace**](https://github.com/marc-ai/mempalace) (a searchable memory MCP server), the team gains:
+
+- **`onboarder` recalls** the codebase map you built last week — and only re-scans the delta
+- **`debugger` recalls** prior root causes for the same error message — first hypothesis is the proven fix
+- **`critic` recalls** prior security findings on the touched files — regression-prone areas get re-checked first
+- **`migration-engineer` recalls** the playbook from the last Next.js 13→14 migration in any of your repos
+- **`web-researcher` caches** API quota / spec lookups so the same Gmail rate-limit page isn't fetched weekly
+- **`frontend-designer` avoids** repeating the brutalist landing page from your last project
+
+Each agent has a **MemPalace Protocol** section near the top of its `agents/*.md` file specifying what to search before starting and what to write back after delivering. The 3 lifecycle hooks above (`mempal-*`) automate the boring parts: status at session start, mine at session stop, snapshot before context compression.
+
+**Install:**
+```bash
+pip install mempalace
+mempalace init
+# then add to your Claude Code MCP config — see mempalace's README
+```
+
+**Without MemPalace**, every protocol step is a silent no-op. The agents still ship. You just don't get the cross-session memory.
+
+See [CLAUDE.en.md](./CLAUDE.en.md#mempalace-integration-memory-across-sessions) for the universal protocol and wing/hall conventions.
 
 ---
 
@@ -171,7 +200,9 @@ Most reported "vulnerabilities" are false positives or partially true. The **PoC
 /plugin install devteam@my-claude-devteam
 ```
 
-Once installed, all 12 agents and 15 hooks register automatically. Restart Claude Code and your dev team is online.
+Once installed, all 12 agents and 18 hooks register automatically. Restart Claude Code and your dev team is online.
+
+> The 3 MemPalace hooks (`mempal-session-start.sh`, `mempal-stop.sh`, `mempal-precompact.sh`) are wired in by default but **self-disable** when `mempalace` is not on `$PATH`. Install MemPalace to activate cross-session memory; otherwise the team behaves exactly like the 15-hook version.
 
 ### Optional: install the methodology document
 
