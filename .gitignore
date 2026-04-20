@@ -7,6 +7,10 @@ error-log.md
 bash-commands.log
 mcp-health-cache.json
 
+# Claude Code per-machine permission overrides (project-shared settings.json
+# is fine to commit; settings.local.json is per-user and noisy)
+.claude/settings.local.json
+
 # Node
 node_modules/
 *.tgz
