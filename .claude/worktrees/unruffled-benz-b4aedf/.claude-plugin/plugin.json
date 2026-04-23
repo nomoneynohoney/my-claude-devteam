@@ -1,0 +1,39 @@
+{
+  "name": "devteam",
+  "version": "1.1.0",
+  "description": "An engineering team in a box for Claude Code. 12 specialized subagents (planner, fullstack-engineer, refactor-specialist, migration-engineer, frontend-designer, critic, vuln-verifier, debugger, db-expert, onboarder, tool-expert, web-researcher) plus 18 automation hooks (pre-commit secret scan, MCP health tracking, cost tracking, test runner, branch protection, large file warner, session summary, batch format, design quality, config protection, and 3 MemPalace lifecycle hooks for optional cross-session memory) wired by the P7/P9/P10 methodology with three red lines: closure discipline, fact-driven, exhaustiveness.",
+  "author": {
+    "name": "NYCU-Chung",
+    "url": "https://github.com/NYCU-Chung"
+  },
+  "homepage": "https://github.com/NYCU-Chung/my-claude-devteam",
+  "repository": "https://github.com/NYCU-Chung/my-claude-devteam",
+  "license": "MIT",
+  "keywords": [
+    "agent-team",
+    "mempalace",
+    "cross-session-memory",
+    "refactor-specialist",
+    "security-audit",
+    "db-expert",
+    "branch-protection",
+    "migration-engineer",
+    "p7-p9-p10",
+    "three-red-lines",
+    "exhaustiveness",
+    "debugging",
+    "subagents",
+    "cost-tracking",
+    "code-review",
+    "mcp-health",
+    "test-runner",
+    "hooks",
+    "methodology",
+    "fact-driven",
+    "onboarder",
+    "dev-team",
+    "commit-quality",
+    "frontend-design",
+    "closure"
+  ]
+}
