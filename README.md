@@ -108,9 +108,12 @@ The team shifts into exhaustive mode when:
 
 ### 🧭 [`karpathy-guidelines`](./skills/karpathy-guidelines/SKILL.md)
 
-**Used by:** all four code-writing agents — `fullstack-engineer`, `refactor-specialist`, `migration-engineer`, `frontend-designer` (mandatory baseline)
+**Used by:** all four code-writing agents — `fullstack-engineer`, `refactor-specialist`, `migration-engineer`, `frontend-designer` (mandatory baseline). Excluded: `critic`, `debugger`, `db-expert`, `vuln-verifier`, `onboarder`, `tool-expert`, `web-researcher`, `planner` — these are review/diagnose/research roles, not bulk code generation.
 
-Four behavioral rules from Andrej Karpathy's LLM-coding observations — **Think Before Coding**, **Simplicity First**, **Surgical Changes**, **Goal-Driven Execution**. In `fullstack-engineer` it's also wired into the Phase-3 self-review as a Karpathy cross-check (Surgical? Simple? Verified?). In `refactor-specialist` / `migration-engineer` / `frontend-designer` it's framed for that specific risk surface (don't drive-by-modernize during refactors, don't adopt new idioms during migrations, don't overengineer code while pursuing bold aesthetics).
+Four behavioral rules from Andrej Karpathy's LLM-coding observations — **Think Before Coding**, **Simplicity First**, **Surgical Changes**, **Goal-Driven Execution**.
+
+- **In `fullstack-engineer` only**, the rules are *additionally* wired into the Phase-3 self-review as a Karpathy cross-check (Surgical? Simple? Verified?).
+- **`refactor-specialist` / `migration-engineer` / `frontend-designer`** carry the four rules as a baseline framed for their specific risk surface (don't drive-by-modernize during refactors, don't adopt new idioms during migrations, don't overengineer code while pursuing bold aesthetics) — but do not have the Phase-3 cross-check.
 
 The skill ships under [`skills/`](./skills/) and is reused via path reference from each agent prompt — no separate installation needed once you've installed this team. To wire it into another agent, point that agent's system prompt at [`skills/karpathy-guidelines/SKILL.md`](./skills/karpathy-guidelines/SKILL.md) the same way the four agents above do.
 

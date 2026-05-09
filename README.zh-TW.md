@@ -108,11 +108,14 @@
 
 ### 🧭 [`karpathy-guidelines`](./skills/karpathy-guidelines/SKILL.md)
 
-**使用者:** `fullstack-engineer`(強制 baseline)
+**使用者:** 四個 code-writing agents 全部 — `fullstack-engineer`、`refactor-specialist`、`migration-engineer`、`frontend-designer`(強制 baseline)。其他 agent(`critic`、`debugger`、`db-expert`、`vuln-verifier`、`onboarder`、`tool-expert`、`web-researcher`、`planner`)是審查 / 診斷 / 研究角色,不大量寫程式,不套用。
 
-源自 Andrej Karpathy 對 LLM coding 失誤的觀察,四條行為準則 —— **Think Before Coding**、**Simplicity First**、**Surgical Changes**、**Goal-Driven Execution**。已寫入 agent 的 Phase 3 自審環節,作為「Karpathy cross-check」(Surgical? Simple? Verified?)。
+源自 Andrej Karpathy 對 LLM coding 失誤的觀察,四條行為準則 —— **Think Before Coding**、**Simplicity First**、**Surgical Changes**、**Goal-Driven Execution**。
 
-Skill 放在 [`skills/`](./skills/) 底下,透過 agent prompt 的路徑引用啟用,裝完團隊就能用,不需要額外安裝步驟。要讓其他 agent 也跟著遵守,把那個 agent 的 system prompt 指向 [`skills/karpathy-guidelines/SKILL.md`](./skills/karpathy-guidelines/SKILL.md) 即可,就像 `fullstack-engineer` 那樣。
+- **只有 `fullstack-engineer`** 額外把這四條整合進 Phase 3 自審環節,作為「Karpathy cross-check」(Surgical? Simple? Verified?)。
+- **`refactor-specialist` / `migration-engineer` / `frontend-designer`** 把這四條當 baseline,並針對各自風險面寫了專屬說明(refactor 時不順便現代化、migrate 時不順手換新慣例、設計時不為了大膽美學而過度工程化),但**沒有** Phase 3 cross-check 環節。
+
+Skill 放在 [`skills/`](./skills/) 底下,透過 agent prompt 的路徑引用啟用,裝完團隊就能用,不需要額外安裝步驟。要讓其他 agent 也跟著遵守,把那個 agent 的 system prompt 指向 [`skills/karpathy-guidelines/SKILL.md`](./skills/karpathy-guidelines/SKILL.md) 即可,就像四個 code-writing agents 那樣。
 
 來源:[forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)(MIT)。
 

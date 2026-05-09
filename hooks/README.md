@@ -125,21 +125,21 @@ Use case: search past sessions later (`grep -r "TimeoutError" ~/.claude/sessions
 
 ### 🧠 `mempal-session-start.sh`
 **Fires:** `SessionStart`
-**What it does:** If the [`mempalace`](https://github.com/marc-ai/mempalace) CLI is on `$PATH`, prints a compact palace status (drawer counts, top wings) plus the top 3 memories matching the current `cwd` repo basename — straight to stderr, so they appear as a system notice in the transcript. This gives every session an instant "what did we already know about this repo?" recap.
+**What it does:** If `mempal-safe` (a local wrapper around the [`mempalace`](https://github.com/marc-ai/mempalace) CLI that quarantines stale ChromaDB HNSW segments) — or plain `mempalace` — is on `$PATH`, prints a compact palace status (drawer counts, top wings) plus the top 3 memories matching the current `cwd` repo basename — straight to stderr, so they appear as a system notice in the transcript. This gives every session an instant "what did we already know about this repo?" recap.
 
-**Self-disables** when `mempalace` is not installed: `command -v mempalace` fails → `exit 0` immediately.
+**Self-disables** when neither `mempal-safe` nor `mempalace` is installed → `exit 0` immediately.
 
 ### 🧠 `mempal-stop.sh`
 **Fires:** `Stop`
-**What it does:** Pipes the Stop event payload to `mempalace hook run --hook stop --harness claude-code` (falling back to `python3 -m mempalace …` for older versions). The palace then mines what was learned in this session into searchable drawers, ready for the next `mempal-session-start.sh` to surface.
+**What it does:** Pipes the Stop event payload to `mempal-safe hook run --hook stop --harness claude-code` (falling back to `python3 -m mempalace …` for older versions). The palace then mines what was learned in this session into searchable drawers, ready for the next `mempal-session-start.sh` to surface.
 
-**Self-disables** when `mempalace` is not installed. Always re-emits stdin so other Stop hooks downstream see the original payload.
+**Self-disables** when neither `mempal-safe` nor `mempalace` is installed. Always re-emits stdin so other Stop hooks downstream see the original payload.
 
 ### 🧠 `mempal-precompact.sh`
 **Fires:** `PreCompact`
-**What it does:** Snapshots important context (active bug traces, in-progress PoCs, design decisions) into the palace right before Claude Code compresses the conversation. Stops valuable work from being lost to context squashing.
+**What it does:** Snapshots important context (active bug traces, in-progress PoCs, design decisions) into the palace right before Claude Code compresses the conversation. Stops valuable work from being lost to context squashing. Calls `mempal-safe hook run` (with the same fallback as `mempal-stop.sh`).
 
-**Self-disables** when `mempalace` is not installed. Always re-emits stdin.
+**Self-disables** when neither `mempal-safe` nor `mempalace` is installed. Always re-emits stdin.
 
 ## Install
 

@@ -1,14 +1,15 @@
 #!/bin/bash
 # MemPalace SessionStart hook — surface palace state + cwd-matching drawers at session boot.
 #
-# Safe no-op when mempalace is not on $PATH. Output goes to stderr so it
-# shows up in the Claude Code transcript as a system notice without
-# polluting the tool's stdin/stdout contract.
+# Safe no-op when neither mempal-safe nor mempalace is on $PATH. Output
+# goes to stderr so it shows up in the Claude Code transcript as a
+# system notice without polluting the tool's stdin/stdout contract.
+# mempal-safe is a local wrapper that quarantines stale HNSW segments.
 
 # Consume stdin (Claude Code sends a JSON payload to every hook).
 cat >/dev/null
 
-command -v mempalace >/dev/null 2>&1 || exit 0
+command -v mempal-safe >/dev/null 2>&1 || command -v mempalace >/dev/null 2>&1 || exit 0
 
 REPO=$(basename "$PWD" 2>/dev/null)
 

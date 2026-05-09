@@ -125,21 +125,21 @@
 
 ### 🧠 `mempal-session-start.sh`
 **觸發：** `SessionStart`
-**做什麼：** 若 [`mempalace`](https://github.com/marc-ai/mempalace) CLI 在 `$PATH` 上，印出簡潔的 palace 狀態（drawer 總數、主要 wing）以及前 3 個與目前 `cwd` repo basename 相符的記憶 — 走 stderr 輸出，會變成 transcript 上的系統提示。讓每個 session 開頭都自動帶出「這個 repo 之前我們已經知道什麼」的快照。
+**做什麼：** 若 `mempal-safe`（一個包住 [`mempalace`](https://github.com/marc-ai/mempalace) CLI 的本地 wrapper，呼叫前會隔離 ChromaDB 的 stale HNSW segment）— 或純 `mempalace` — 在 `$PATH` 上，印出簡潔的 palace 狀態（drawer 總數、主要 wing）以及前 3 個與目前 `cwd` repo basename 相符的記憶 — 走 stderr 輸出，會變成 transcript 上的系統提示。讓每個 session 開頭都自動帶出「這個 repo 之前我們已經知道什麼」的快照。
 
-**自動禁用：** 未安裝 `mempalace` 時，`command -v mempalace` 失敗 → 立即 `exit 0`。
+**自動禁用：** `mempal-safe` 與 `mempalace` 都未安裝時，立即 `exit 0`。
 
 ### 🧠 `mempal-stop.sh`
 **觸發：** `Stop`
-**做什麼：** 把 Stop 事件 payload pipe 給 `mempalace hook run --hook stop --harness claude-code`（舊版會自動 fallback 到 `python3 -m mempalace …`）。Palace 會把這次 session 學到的東西 mine 成可搜尋的 drawer，等下次 `mempal-session-start.sh` 撈出來。
+**做什麼：** 把 Stop 事件 payload pipe 給 `mempal-safe hook run --hook stop --harness claude-code`（舊版會自動 fallback 到 `python3 -m mempalace …`）。Palace 會把這次 session 學到的東西 mine 成可搜尋的 drawer，等下次 `mempal-session-start.sh` 撈出來。
 
-**自動禁用：** 未安裝 `mempalace` 時 no-op。永遠把 stdin 原樣 re-emit，讓下游其他 Stop hook 看得到原始 payload。
+**自動禁用：** `mempal-safe` 與 `mempalace` 都未安裝時 no-op。永遠把 stdin 原樣 re-emit，讓下游其他 Stop hook 看得到原始 payload。
 
 ### 🧠 `mempal-precompact.sh`
 **觸發：** `PreCompact`
-**做什麼：** 在 Claude Code 壓縮對話前，把重要 context（進行中的 bug trace、PoC、設計決策）快照到 palace。防止有價值的工作被 context squash 吃掉。
+**做什麼：** 在 Claude Code 壓縮對話前，把重要 context（進行中的 bug trace、PoC、設計決策）快照到 palace，呼叫方式同 `mempal-stop.sh`。防止有價值的工作被 context squash 吃掉。
 
-**自動禁用：** 未安裝 `mempalace` 時 no-op。永遠 re-emit stdin。
+**自動禁用：** `mempal-safe` 與 `mempalace` 都未安裝時 no-op。永遠 re-emit stdin。
 
 ## 安裝
 
