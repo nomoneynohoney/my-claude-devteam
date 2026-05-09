@@ -11,7 +11,7 @@ if command -v mempalace >/dev/null 2>&1; then
   # Try the CLI hook runner; fall back to the python module invocation
   # that older mempalace versions use; silently swallow any error so
   # a broken palace never blocks Claude Code from finishing the session.
-  echo "$INPUT" | mempalace hook run --hook stop --harness claude-code 2>/dev/null \
+  echo "$INPUT" | mempal-safe hook run --hook stop --harness claude-code 2>/dev/null \
     || echo "$INPUT" | python3 -m mempalace hook run --hook stop --harness claude-code 2>/dev/null \
     || true
 fi

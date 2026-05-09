@@ -3,7 +3,7 @@
 **English · [繁體中文](./README.zh-TW.md)**
 
 > **An entire engineering team for Claude Code**
-> — 12 specialized agents, 18 automation hooks (with optional cross-session **MemPalace** memory), and the P7/P9/P10 methodology that keeps them disciplined.
+> — 12 specialized agents, 18 automation hooks (with optional cross-session **MemPalace** memory), the P7/P9/P10 methodology that keeps them disciplined, plus bundled **Karpathy Guidelines** baked into the programmer agent.
 
 Most people use Claude Code as a single coder. This config turns it into a full engineering org: **planner, fullstack-engineer, refactor-specialist, migration-engineer, frontend-designer, critic, vuln-verifier, debugger, db-expert, onboarder, tool-expert, web-researcher** — each agent owns a role, each has its own tool permissions, and a strict delegation rulebook decides who touches what.
 
@@ -101,6 +101,20 @@ The team shifts into exhaustive mode when:
 - User says "don't get slapped again" → cross-verify every assumption 3 different ways
 
 > We don't keep idle agents. No half-finished work. No excuses.
+
+---
+
+## Bundled Skills
+
+### 🧭 [`karpathy-guidelines`](./skills/karpathy-guidelines/SKILL.md)
+
+**Used by:** all four code-writing agents — `fullstack-engineer`, `refactor-specialist`, `migration-engineer`, `frontend-designer` (mandatory baseline)
+
+Four behavioral rules from Andrej Karpathy's LLM-coding observations — **Think Before Coding**, **Simplicity First**, **Surgical Changes**, **Goal-Driven Execution**. In `fullstack-engineer` it's also wired into the Phase-3 self-review as a Karpathy cross-check (Surgical? Simple? Verified?). In `refactor-specialist` / `migration-engineer` / `frontend-designer` it's framed for that specific risk surface (don't drive-by-modernize during refactors, don't adopt new idioms during migrations, don't overengineer code while pursuing bold aesthetics).
+
+The skill ships under [`skills/`](./skills/) and is reused via path reference from each agent prompt — no separate installation needed once you've installed this team. To wire it into another agent, point that agent's system prompt at [`skills/karpathy-guidelines/SKILL.md`](./skills/karpathy-guidelines/SKILL.md) the same way the four agents above do.
+
+Source: [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT).
 
 ---
 
@@ -250,7 +264,7 @@ This repo is **opinionated methodology + tools**, not a kitchen sink. You still 
 - **Your own subagents** for project-specific roles (VPS ops, deployment automation, custom integrations)
 - **Your own hook configuration** for paths and thresholds
 - **Your own CLAUDE.md project sections** — infrastructure, repo lists, deployment commands (keep these out of the public repo for security)
-- **Third-party skill packs** — this repo doesn't redistribute other people's work
+- **Third-party skill packs** — this repo bundles only [Karpathy Guidelines](./skills/karpathy-guidelines/SKILL.md) (MIT, attributed); other skill packs are on you
 
 ---
 

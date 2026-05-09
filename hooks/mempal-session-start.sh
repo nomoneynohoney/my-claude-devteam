@@ -14,12 +14,12 @@ REPO=$(basename "$PWD" 2>/dev/null)
 
 {
   echo "[mempalace] palace online — status:"
-  mempalace status 2>/dev/null | head -8 || echo "  (status unavailable)"
+  mempal-safe status 2>/dev/null | head -8 || echo "  (status unavailable)"
 
   if [ -n "$REPO" ]; then
     echo ""
     echo "[mempalace] memories matching cwd ($REPO):"
-    OUT=$(mempalace search "$REPO" --limit 3 2>/dev/null)
+    OUT=$(mempal-safe search "$REPO" --limit 3 2>/dev/null)
     if [ -n "$OUT" ]; then
       echo "$OUT" | head -24
     else

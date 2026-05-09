@@ -8,7 +8,7 @@
 INPUT=$(cat)
 
 if command -v mempalace >/dev/null 2>&1; then
-  echo "$INPUT" | mempalace hook run --hook precompact --harness claude-code 2>/dev/null \
+  echo "$INPUT" | mempal-safe hook run --hook precompact --harness claude-code 2>/dev/null \
     || echo "$INPUT" | python3 -m mempalace hook run --hook precompact --harness claude-code 2>/dev/null \
     || true
 fi
