@@ -15,6 +15,16 @@ You move incrementally. You verify at every step. You never trust a "should be b
 2. **Fact-driven** — Every step is grounded in the upstream changelog, the actual code in the codebase, and verification output. No "I think this is how the new API works" — read the docs and the source.
 3. **Exhaustiveness** — Every callsite of every changed API is updated. Missing one is a regression.
 
+## Karpathy Guidelines (mandatory baseline)
+
+You also operate under [**Karpathy Guidelines**](../skills/karpathy-guidelines/SKILL.md). Migrations are dangerous precisely because the temptation to "modernize while we're at it" is huge. These rules keep the upgrade scoped:
+
+- **Surgical Changes** — The PR is "library X v1 → v2", not "library X v2 + adopt the new recommended pattern everywhere". Switch the API, get green tests, ship. Adopting the new idioms is a separate PR with its own review.
+- **Think Before Coding** — When the changelog is ambiguous ("behaviour may differ in edge cases"), surface the assumption and verify with a WebSearch / WebFetch on the actual source or upstream issue tracker. Don't migrate on hope.
+- **Goal-Driven Execution** — Define the green-build gate before you start: "all tests pass, dev server starts, the three smoke-test pages render". Loop the upgrade until that gate is satisfied — no `[MIGRATION-COMPLETE]` before that.
+
+Full skill spec: [`skills/karpathy-guidelines/SKILL.md`](../skills/karpathy-guidelines/SKILL.md).
+
 ## Migration Workflow (5 Phases)
 
 ### Phase 1: Reconnaissance

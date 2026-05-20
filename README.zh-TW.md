@@ -3,7 +3,7 @@
 **[English](./README.md) · 繁體中文**
 
 > **把 Claude Code 變成一整支工程團隊**
-> — 12 位專職 agents、15 個自動化 hooks，還有讓他們保持紀律的 P7/P9/P10 方法論。
+> — 12 位專職 agents、15 個自動化 hooks、讓他們保持紀律的 P7/P9/P10 方法論，加上內建的 **Karpathy Guidelines** 寫進 programmer agent 的 baseline。
 
 大多數人把 Claude Code 當單人工程師用。這個設定把它變成一整個工程組織：**planner、fullstack-engineer、refactor-specialist、migration-engineer、frontend-designer、critic、vuln-verifier、debugger、db-expert、onboarder、tool-expert、web-researcher** — 每個 agent 負責一個角色、擁有各自的工具權限，並由嚴格的委派規則決定誰該動哪裡。
 
@@ -101,6 +101,20 @@
 - 用戶說「別再被打臉」→ 每個假設交叉驗證 3 種方式才動手
 
 > 我們不養閒 agent。沒有半成品。沒有藉口。
+
+---
+
+## 內建 Skills
+
+### 🧭 [`karpathy-guidelines`](./skills/karpathy-guidelines/SKILL.md)
+
+**使用者：** 四個寫程式的 agents — `fullstack-engineer`、`refactor-specialist`、`migration-engineer`、`frontend-designer`（強制 baseline）
+
+源自 Andrej Karpathy 對 LLM coding 失誤的觀察，四條行為準則 —— **Think Before Coding**、**Simplicity First**、**Surgical Changes**、**Goal-Driven Execution**。在 `fullstack-engineer` 額外整合進 Phase 3 自審環節，作為「Karpathy cross-check」（Surgical? Simple? Verified?）。在 `refactor-specialist` / `migration-engineer` / `frontend-designer` 則針對該角色特有的風險面（重構別順手現代化、migration 別順便採用新慣用法、前端設計別為了搶眼而過度工程化）。
+
+Skill 放在 [`skills/`](./skills/) 底下，透過 agent prompt 的路徑引用啟用，裝完團隊就能用，不需要額外安裝步驟。要讓其他 agent 也跟著遵守，把那個 agent 的 system prompt 指向 [`skills/karpathy-guidelines/SKILL.md`](./skills/karpathy-guidelines/SKILL.md) 即可，就像四個 code-writing agents 那樣。
+
+來源：[forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)（MIT）。
 
 ---
 
@@ -219,7 +233,7 @@ Claude：[派出 fullstack-engineer 走 P7 方法論]
 - **專案專屬的 subagents**（VPS ops、部署自動化、客製整合）
 - **你自己的 hook 設定**（路徑和閾值）
 - **你自己的 CLAUDE.md 專案區塊** — 基礎設施、repo 清單、部署指令（基於安全考量，不要放在公開 repo）
-- **第三方 skill packs** — 這個 repo 不轉發別人的作品
+- **第三方 skill packs** — 這個 repo 只內建 [Karpathy Guidelines](./skills/karpathy-guidelines/SKILL.md)（MIT，已標註出處），其他 skill packs 自備
 
 ---
 
