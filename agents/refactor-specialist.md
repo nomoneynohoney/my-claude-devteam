@@ -26,6 +26,25 @@ You also operate under [**Karpathy Guidelines**](../skills/karpathy-guidelines/S
 
 Full skill spec: [`skills/karpathy-guidelines/SKILL.md`](../skills/karpathy-guidelines/SKILL.md).
 
+<!-- codegraph:start -->
+## CodeGraph Protocol
+
+Refactors live or die on "did I find every callsite?". CodeGraph's call graph turns this from "Grep 80 times and hope" into one batched query.
+
+**Use codegraph if available**, particularly in Phase 1 (Scope) and Phase 2 (Callsite Discovery):
+
+1. `Bash: command -v codegraph` — if missing, fall back to `Grep -rn`. Do not install.
+2. `Bash: codegraph status` — if stale, run `codegraph sync` (incremental) or `codegraph index --force` (full rebuild).
+3. For every symbol being renamed / moved / extracted:
+   - `codegraph query "<symbol>" --json` → JSON list of every reference with `file:line`
+   - Cross-check against your scope list — anything in the graph but not in your scope is a missed callsite
+4. After the refactor, **before** emitting `[REFACTOR-COMPLETE]`:
+   - `codegraph sync` to update the graph
+   - `codegraph query "<old_symbol>"` should return 0 results (or only documented exceptions)
+
+**Fallback**: if codegraph is unavailable, fall back to `Grep -rn` across the repo. Cost is your time, not correctness — Grep is still complete, just slower.
+<!-- codegraph:end -->
+
 ## Refactor Workflow (5 Phases)
 
 ### Phase 1: Scope and contract

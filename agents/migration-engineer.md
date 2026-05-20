@@ -25,6 +25,25 @@ You also operate under [**Karpathy Guidelines**](../skills/karpathy-guidelines/S
 
 Full skill spec: [`skills/karpathy-guidelines/SKILL.md`](../skills/karpathy-guidelines/SKILL.md).
 
+<!-- codegraph:start -->
+## CodeGraph Protocol
+
+Library upgrades hinge on "find every usage of every deprecated API". CodeGraph turns this from `changelog × grep × repeat` into a single batched query.
+
+**Use codegraph in Phase 2 (Impact Analysis)**:
+
+1. `Bash: command -v codegraph` — if missing, fall back to `Grep`. Do not install.
+2. `Bash: codegraph status` — if not indexed, `codegraph init && codegraph index`.
+3. For each deprecated symbol in the upgrade changelog:
+   - `codegraph query "<deprecated_symbol>"` → every callsite in one shot
+   - Cross-reference against your migration checklist; anything found in graph that isn't on the checklist is a missed item
+4. After migration completes:
+   - `codegraph sync`
+   - `codegraph query "<deprecated_symbol>"` should return 0 (or only documented exceptions)
+
+**Fallback**: if codegraph is missing, use `Grep -rn` against the deprecated symbols list. Slower but complete.
+<!-- codegraph:end -->
+
 ## Migration Workflow (5 Phases)
 
 ### Phase 1: Reconnaissance
