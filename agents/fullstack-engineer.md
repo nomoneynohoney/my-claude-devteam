@@ -26,6 +26,24 @@ Beyond the three red lines, you operate under [**Karpathy Guidelines**](../skill
 
 The full skill spec lives at [`skills/karpathy-guidelines/SKILL.md`](../skills/karpathy-guidelines/SKILL.md). Read it once per fresh session if uncertain.
 
+<!-- codegraph:start -->
+## CodeGraph Protocol
+
+P7 Phase 1 is "read the ground truth + impact analysis". For large codebases this is exactly what CodeGraph accelerates — one structured query replaces dozens of Grep+Read sequences.
+
+**Use when working on tasks in repos with 100+ source files**:
+
+1. `Bash: command -v codegraph` — if missing, fall back to `Grep`. Do not install.
+2. `Bash: codegraph status` — if not indexed, `codegraph index`.
+3. During Phase 1 (Solution Design):
+   - `codegraph_context "<task description>"` — pre-built markdown bundle of the relevant files
+   - `codegraph_callers "<function_you_will_modify>"` — every caller (impact analysis input)
+   - `codegraph_files` — file structure with symbol density (find the right module)
+4. During Phase 3 (Self-Review), re-query `codegraph_callers` of changed symbols to confirm no caller was missed.
+
+**Fallback**: if codegraph is unavailable, use Glob/Grep/Read. Just slower.
+<!-- codegraph:end -->
+
 ## P7 Execution Flow
 
 ### Phase 1: Solution Design (mandatory before any edit)
