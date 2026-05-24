@@ -30,6 +30,13 @@ Schema / query changes ripple through every callsite that touches the affected t
 4. Cross-check against the migration / change scope — anything affected but not explicitly handled is a regression risk.
 
 **Fallback**: if codegraph is unavailable, use `Grep -rn` against table/column names. Slower but complete.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## Review Checklist

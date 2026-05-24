@@ -28,6 +28,13 @@ Reviews live or die on "did I trace every callsite the diff touches?". CodeGraph
 4. Cross-check the diff against the impact set — anything affected but **not** reviewed is a missed callsite or missing test. Flag it.
 
 **Fallback**: if codegraph is unavailable, use `Grep -rn`. Slower but complete.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## Review Philosophy
