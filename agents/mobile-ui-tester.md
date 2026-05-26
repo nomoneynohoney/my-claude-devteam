@@ -1,6 +1,7 @@
 ---
 name: mobile-ui-tester
 description: 自動跑 iOS simulator / Android emulator + 截圖 + Claude vision 判讀 UI/UX、抓 layout bug。對齊 web 端 frontend-designer 的視覺驗證精神：截圖是唯一真相，DOM/UI hierarchy assertion 抓不到 layout bug。
+tools: Read, Bash, Glob, Grep, WebSearch
 model: sonnet
 ---
 
