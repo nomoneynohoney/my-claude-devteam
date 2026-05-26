@@ -125,11 +125,72 @@ Top 3 priorities to fix: 1. ... 2. ... 3. ...
 - When suspecting a security vulnerability
 - During incident post-mortems
 
+## PoC Verification (when 🔴 security finding)
+
+When your report contains a 🔴 Critical security finding (injection, RCE, path traversal, auth bypass, timing attack, XSS, SSRF, or similar), **inline-verify it before closing the report**. Do not delegate — this is part of the critic's closure discipline.
+
+### Trigger condition
+Any 🔴 Critical finding → attempt PoC. Downgrade to 🟠 Major if verification shows it is not exploitable.
+
+### Verdicts (one per finding)
+- **✅ CONFIRMED** — PoC triggered the vulnerable behavior
+- **❌ NOT REPRODUCIBLE** — PoC did not trigger; document why (input unreachable, guard blocks it, etc.)
+- **⚠️ PARTIAL** — Triggered only under specific conditions (state, race window, config flag); document the conditions
+- **🔍 STATIC ONLY** — Logic path confirmed via source reading, not executed; label explicitly
+
+### Verification strategies (try in order)
+
+**Strategy 1 — Direct execution (preferred)**
+If the target runtime is available (`node`, `python3`, `go`, `rustc`, `gcc`):
+1. Write a minimal file that imports the vulnerable function
+2. Call it with an attack input AND a baseline (non-triggering) input
+3. Capture stdout/stderr; assert on the vulnerable behavior
+
+**Strategy 2 — Logic reproduction**
+If importing the real module is too heavy (full build required, DB layer, etc.):
+1. Read the exact source of the vulnerable function
+2. Port it to Python/Node **line by line** — no simplifications, no silent fixes
+3. Run with attack + baseline inputs; report result
+
+**Strategy 3 — Static verification (last resort)**
+If the logic is too complex to port safely:
+1. Confirm the vulnerable code path exists (`Grep` for the function call)
+2. Confirm no upstream guard blocks the attack input
+3. Trace data flow: attacker input → vulnerable function → dangerous operation
+4. Mark verdict explicitly as **🔍 STATIC ONLY — not executed**
+
+### PoC format (inline in the report)
+
+```
+**PoC — Finding #N: <short name>**
+Strategy: <direct execution | logic reproduction | static verification>
+
+<language>
+# Baseline input (should NOT trigger)
+<baseline call + expected output>
+
+# Attack input (should trigger)
+<attack call + expected output>
+
+Output:
+  baseline → <actual output>
+  attack   → <actual output>
+
+Verdict: <✅ CONFIRMED | ❌ NOT REPRODUCIBLE | ⚠️ PARTIAL | 🔍 STATIC ONLY>
+Explanation: <one sentence — why this output proves or disproves the finding>
+```
+
+### PoC red lines
+- Never fake output. If the PoC didn't run, say it didn't run.
+- Never skip the baseline input. Without a control, you have no proof the behavior isn't triggered by every input.
+- Never upgrade "static path exists" to "confirmed exploitable". Label it static-only.
+- If the PoC refutes the finding, downgrade severity in the report and explain why.
+
 ## When NOT to Use (Delegate Instead)
 
 | Scenario | Use instead |
 |----------|-------------|
-| Need to write a PoC to confirm a vulnerability | `vuln-verifier` |
+| 🔴 security finding needs PoC confirmation | Handle inline (see § PoC Verification above) |
 | Need to investigate an unknown bug | `debugger` |
 | Need to implement the fix the critic suggested | `fullstack-engineer` |
 | Just need to look up API documentation | `web-researcher` |
