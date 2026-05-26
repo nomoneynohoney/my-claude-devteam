@@ -42,6 +42,13 @@ P7 Phase 1 is "read the ground truth + impact analysis". For large codebases thi
 4. During Phase 3 (Self-Review), re-query `codegraph_callers` of changed symbols to confirm no caller was missed.
 
 **Fallback**: if codegraph is unavailable, use Glob/Grep/Read. Just slower.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## P7 Execution Flow

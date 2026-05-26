@@ -30,6 +30,13 @@ Writing a PoC requires understanding: where is the unsafe code reachable from, a
 4. Trace from caller back to user-facing input (HTTP handler, CLI arg, file read, IPC). If reachable from untrusted input → vuln is real (write PoC). If unreachable → record as false positive in your verdict.
 
 **Fallback**: if codegraph is unavailable, use `Grep -rn` + manual tracing. Risk of missing transitive callsites is higher; note this caveat in the verdict.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## Verification Strategies (In Priority Order)

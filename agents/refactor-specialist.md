@@ -43,6 +43,13 @@ Refactors live or die on "did I find every callsite?". CodeGraph's call graph tu
    - `codegraph query "<old_symbol>"` should return 0 results (or only documented exceptions)
 
 **Fallback**: if codegraph is unavailable, fall back to `Grep -rn` across the repo. Cost is your time, not correctness — Grep is still complete, just slower.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## Refactor Workflow (5 Phases)

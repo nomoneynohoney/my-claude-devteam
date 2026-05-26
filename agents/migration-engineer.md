@@ -42,6 +42,13 @@ Library upgrades hinge on "find every usage of every deprecated API". CodeGraph 
    - `codegraph query "<deprecated_symbol>"` should return 0 (or only documented exceptions)
 
 **Fallback**: if codegraph is missing, use `Grep -rn` against the deprecated symbols list. Slower but complete.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## Migration Workflow (5 Phases)

@@ -29,6 +29,13 @@ Root-cause analysis is "who calls this broken thing, who else uses it, where doe
 4. Cross-reference with stack traces / log lines to narrow the broken path.
 
 **Fallback**: if codegraph is unavailable, use `Grep -rn`. Investigation just takes longer.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## Debug Methodology (5 Phases)

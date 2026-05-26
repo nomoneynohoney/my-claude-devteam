@@ -33,6 +33,13 @@ For large codebases (100+ source files, or when the user explicitly mentions it)
 - `codegraph files` — file structure with symbol density (helps identify "hot" modules)
 
 **Fallback**: if any codegraph step fails, silently fall back to standard Glob/Grep. Never block the report on codegraph being available.
+
+**Required output header**: Every report / deliverable you produce MUST begin with one line declaring which mode was used:
+
+- `**CodeGraph**: ✅ used (indexed N symbols)` — when codegraph was successfully queried
+- `**CodeGraph**: ⚠ fallback to Grep — <one-line reason>` — when fell back (e.g. "not installed", "init failed", "repo too small", "MCP timeout")
+
+This line is non-negotiable. If you omit it, the user cannot tell whether your output relied on the indexed graph or grep+intuition.
 <!-- codegraph:end -->
 
 ## Onboarding Workflow
