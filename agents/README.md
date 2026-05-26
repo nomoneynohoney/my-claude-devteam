@@ -2,7 +2,7 @@
 
 **English · [繁體中文](./README.zh-TW.md)**
 
-Twelve specialized agents that replace "one Claude, many prompts" with "one request, a full engineering team".
+Fifteen specialized agents that replace "one Claude, many prompts" with "one request, a full engineering team".
 
 ## Roster
 
@@ -18,8 +18,7 @@ Twelve specialized agents that replace "one Claude, many prompts" with "one requ
 ### Quality & safety
 | Agent | Role | Model | Tools | Primary job |
 |-------|------|-------|-------|-------------|
-| [`critic`](./critic.md) | Code Reviewer | opus | Read-only | Finds bugs, security holes, edge cases. Every finding with file:line + fix direction. |
-| [`vuln-verifier`](./vuln-verifier.md) | Pentester | opus | Read-only | Takes critic findings and writes real PoCs to confirm. No false positives. |
+| [`critic`](./critic.md) | Code Reviewer | opus | Read/Write | Finds bugs, security holes, edge cases. Inline-verifies 🔴 findings with PoC. Every finding with file:line + fix direction. |
 | [`debugger`](./debugger.md) | Debug Engineer | opus | Read-only | Reads logs, builds hypotheses, verifies, fixes. Never guesses. |
 | [`db-expert`](./db-expert.md) | DB Specialist | opus | Read-only | Reviews schemas, migrations, queries for safety, indexes, race conditions. |
 
@@ -30,7 +29,7 @@ Twelve specialized agents that replace "one Claude, many prompts" with "one requ
 | [`tool-expert`](./tool-expert.md) | Platform Engineer | sonnet | All | Picks the right tool, chains workflows, troubleshoots tool failures. |
 | [`web-researcher`](./web-researcher.md) | Librarian | sonnet | WebSearch/WebFetch | Turns uncertainty into verified facts with sources. |
 
-> **Note on tools**: agents have the minimum tools they need. Read-only agents (`planner`, `critic`, `vuln-verifier`, `debugger`, `db-expert`, `onboarder`) analyze and produce reports without modifying files. Execution agents (`fullstack-engineer`, `frontend-designer`, `refactor-specialist`, `migration-engineer`, `tool-expert`) have `Edit` / `Write`.
+> **Note on tools**: agents have the minimum tools they need. Read-only agents (`planner`, `debugger`, `db-expert`, `onboarder`) analyze and produce reports without modifying files. `critic` has `Write` to create PoC files in `/tmp/`. Execution agents (`fullstack-engineer`, `frontend-designer`, `refactor-specialist`, `migration-engineer`, `tool-expert`) have `Edit` / `Write`.
 
 ## Delegation Matrix
 
@@ -46,8 +45,7 @@ When the parent Claude gets a request, it uses this matrix to decide who to disp
 | "Fix the bug in X" | `debugger` first, then `fullstack-engineer` for the fix |
 | "Review this diff before we merge" | `critic` |
 | "Review this schema / migration / query" | `db-expert` |
-| "Audit this code for security issues" | `critic` (which may hand off to `vuln-verifier`) |
-| "Confirm this vulnerability is real" | `vuln-verifier` |
+| "Audit this code for security issues" | `critic` (inline PoC verification included) |
 | "Why is the service crashing?" | `debugger` |
 | "What does this codebase do?" | `onboarder` |
 | "How does API X work?" | `web-researcher` |
@@ -85,8 +83,7 @@ You → planner (decomposes into N Task Prompts)
 
 ### Pattern 5: Security audit
 ```
-You → critic (scan for vulnerabilities)
-     → vuln-verifier (PoC each finding, produce verdicts)
+You → critic (scan for vulnerabilities, inline PoC each 🔴 finding)
      → fullstack-engineer (fix confirmed vulnerabilities)
      → critic (verify fixes)
 ```

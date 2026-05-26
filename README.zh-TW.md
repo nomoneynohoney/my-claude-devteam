@@ -3,9 +3,9 @@
 **[English](./README.md) · 繁體中文**
 
 > **把 Claude Code 變成一整支工程團隊**
-> — 12 位專職 agents、15 個自動化 hooks、讓他們保持紀律的 P7/P9/P10 方法論，加上內建的 **Karpathy Guidelines** 寫進 programmer agent 的 baseline。
+> — 15 位專職 agents、15 個自動化 hooks、讓他們保持紀律的 P7/P9/P10 方法論，加上內建的 **Karpathy Guidelines** 寫進 programmer agent 的 baseline。
 
-大多數人把 Claude Code 當單人工程師用。這個設定把它變成一整個工程組織：**planner、fullstack-engineer、refactor-specialist、migration-engineer、frontend-designer、critic、vuln-verifier、debugger、db-expert、onboarder、tool-expert、web-researcher** — 每個 agent 負責一個角色、擁有各自的工具權限，並由嚴格的委派規則決定誰該動哪裡。
+大多數人把 Claude Code 當單人工程師用。這個設定把它變成一整個工程組織：**planner、fullstack-engineer、refactor-specialist、migration-engineer、frontend-designer、critic、debugger、db-expert、onboarder、tool-expert、web-researcher** — 每個 agent 負責一個角色、擁有各自的工具權限，並由嚴格的委派規則決定誰該動哪裡。
 
 背後有 **大廠工程文化的紀律**（閉環意識、事實驅動、窮盡一切），搭配 **實戰打磨的 hooks**，在 debugger 語句、硬編密碼、成本失控、MCP 斷線等問題進 main 之前就攔下來。
 
@@ -20,8 +20,7 @@
 | 🔄 **Refactor Lead** | `refactor-specialist` | 大規模安全重構：原子 commit、完整 callsite 驗證、單次 revert 即可回滾。 | Rename、移檔案、抽元件，影響 10+ 檔案時 |
 | 🚀 **Migration Lead** | `migration-engineer` | Framework / 函式庫主版本升級。讀上游 changelog，分階段執行、每步驗證。 | Next.js 13→14、Vue 2→3、Tailwind 3→4 等 |
 | 🎨 **Designer** | `frontend-designer` | 打造讓人記住的 landing page、dashboard、UI 元件。拒絕 AI slop，堅持鮮明美學方向。 | 新頁面、UI 重設計、視覺升級 |
-| 🔍 **Code Reviewer** | `critic` | 找 bug、安全漏洞、邏輯錯誤、邊界條件、效能問題。每個發現都附檔案路徑+行號。不說「看起來沒問題」。 | Commit 前、部署前、Merge 前 |
-| 🧪 **Pentester** | `vuln-verifier` | 接 critic 找到的漏洞，實際寫 PoC 測試證明漏洞是真是假。零誤報、零空口白話。 | critic 標出安全問題之後 |
+| 🔍 **Code Reviewer** | `critic` | 找 bug、安全漏洞、邏輯錯誤、邊界條件、效能問題。🔴 安全發現 inline 寫 PoC 驗證後再結案。每個發現都附檔案路徑+行號。不說「看起來沒問題」。 | Commit 前、部署前、Merge 前 |
 | 🐛 **Debug Engineer** | `debugger` | 讀 log、建立假設、驗證、修復。不猜測，只追根本原因。含 log 分析。 | Bug 回報、服務異常、測試失敗 |
 | 🗄 **DB Specialist** | `db-expert` | 審查 schema、migration、query 的安全性、索引、鎖、race condition。對 data loss 偏執。 | Schema 變更、migration 審查、query 優化 |
 | 🗺 **Onboarder** | `onboarder` | 第一次接觸 codebase 時用，產出結構化的 mental model — 架構、entry point、可疑區域。 | 接手新專案、評估開源 repo |
@@ -66,7 +65,7 @@
    └──────────────┘  └─────────────┘
 ```
 
-**安全相關工作**走另一條路：`critic` 發現 → `vuln-verifier` 寫 PoC → 修復或發 PR。
+**安全相關工作**：`critic` 發現 → inline PoC 驗證 → 修復或發 PR。
 
 ---
 
@@ -172,10 +171,6 @@ Skill 放在 [`skills/`](./skills/) 底下，透過 agent prompt 的路徑引用
 
 任務涉及 3+ 檔案時，先派 `planner` 可以把 30 則對話的釐清過程變成一份結構化 Task Prompt。**六要素契約**（目標 / 範圍 / 輸入 / 輸出 / 驗收 / 邊界）逼你在有人動筆之前先把 Definition of Done 寫清楚。
 
-### `vuln-verifier` 無聊得剛剛好
-
-大多數「漏洞」報告其實是誤報或半真半假。**PoC-or-it-didn't-happen** 協議把「我覺得這裡可能可以被打」的模糊報告變成帶有實際程式輸出的判定。每個判定都附攻擊輸入 **和** 正常對照輸入 — 所以你能證明漏洞行為是被攻擊觸發的，不是任何輸入都會觸發。
-
 ---
 
 ## 一鍵安裝
@@ -185,7 +180,7 @@ Skill 放在 [`skills/`](./skills/) 底下，透過 agent prompt 的路徑引用
 /plugin install devteam@my-claude-devteam
 ```
 
-安裝完成後，12 個 agents 與 15 個 hooks 會自動註冊；重啟 Claude Code 即可生效。
+安裝完成後，15 個 agents 與 15 個 hooks 會自動註冊；重啟 Claude Code 即可生效。
 
 ### 建議：安裝方法論文件
 
@@ -240,7 +235,7 @@ Claude：[派出 fullstack-engineer 走 P7 方法論]
 ## Credits
 
 - **P7/P9/P10 方法論與 PUA 模式** 改編自 [**tanweai/pua**](https://github.com/tanweai/pua)（MIT License），作者為探微安全实验室。原版是完整的 Claude Code plugin，包含 KPI 報告、排行榜、自進化追蹤、Loop 模式等進階功能。想要完整功能可以直接從 [openpua.ai](https://openpua.ai) 安裝。
-- **12 人團隊結構與 hooks** 是多個月實戰迭代的產物 — 出貨到 production、踩坑、再迭代。
+- **15 人團隊結構與 hooks** 是多個月實戰迭代的產物 — 出貨到 production、踩坑、再迭代。
 - **核心哲學** 受中國大廠工程文化影響：P 職級體系、閉環導向任務管理、「三條紅線」紀律、以及把「差不多就好」變成「窮盡一切」的高壓工程文化。
 
 ---

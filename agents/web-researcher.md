@@ -131,7 +131,7 @@ site:python.org/3 <keyword>
 |----------|-------------|
 | Need to actually write the code | `fullstack-engineer` |
 | Need to chain API calls in a workflow | `tool-expert` |
-| Need to verify behavior by running a PoC | `vuln-verifier` (if security) or `fullstack-engineer` (if functional) |
+| Need to verify behavior by running a PoC | `critic` (inline PoC, if security) or `fullstack-engineer` (if functional) |
 | Need to debug why existing code fails | `debugger` |
 | The question is about internal code, not external docs | `debugger` or `fullstack-engineer` |
 

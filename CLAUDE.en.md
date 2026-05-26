@@ -8,14 +8,13 @@
 
 For complex tasks (multiple files, architectural changes, deployment operations), use TodoWrite first to list the plan, confirm with the user, then execute.
 
-## 12-Agent Expert Team (Subagents)
+## 11-Agent Expert Team (Subagents)
 
-Twelve subagents form a collaborative team. Call them with the `Agent` tool (pass the name below as `subagent_type`).
+Eleven subagents form a collaborative team. Call them with the `Agent` tool (pass the name below as `subagent_type`).
 
 | Agent | Name | When to use |
 |-------|------|-------------|
-| Critic | `critic` | Code review, security review, plan review, pre-deploy check |
-| Vulnerability Verifier | `vuln-verifier` | After critic finds a vulnerability, writes an actual PoC to confirm it is real |
+| Critic | `critic` | Code review, security review, plan review, pre-deploy check, 🔴 finding inline PoC verification |
 | Debugger | `debugger` | Bug hunting, log analysis, service incidents, test failures |
 | DB Expert | `db-expert` | Schema design, migration safety, query optimization, index advice |
 | Planner | `planner` | Task decomposition (P9 methodology: strategic breakdown → Task Prompt → delivery closure) |
@@ -145,8 +144,7 @@ When the user says "don't stop", "loop mode", "I'm going to sleep", enter Loop M
 | Schema / migration / SQL query change | `db-expert` reviews |
 | First time touching this codebase | `onboarder` to build a mental model |
 | Single-feature or cross-module implementation | `fullstack-engineer` (P7 flow) |
-| Security review needed before coding / suspicion of a vulnerability | `critic` (includes security audit) |
-| After critic reports a vulnerability, verify it's real | `vuln-verifier` (writes a PoC) |
+| Security review needed before coding / suspicion of a vulnerability | `critic` (includes security audit + inline PoC verification) |
 | Searching logs for error patterns | `debugger` (includes log analysis) |
 | New page design, UI redesign, landing page, dashboard, visual upgrade | `frontend-designer` (aesthetic methodology, rejects AI slop) |
 | Looking up official docs, API specs, error codes | `web-researcher` |
@@ -169,7 +167,7 @@ Regular task:   planner → fullstack-engineer → critic → deploy
                                    ↓ if problems
                               debugger investigates
 
-Security audit: critic finds vulnerabilities → vuln-verifier confirms → fix or file PR
+Security audit: critic finds vulnerabilities + inline PoC verification → fix or file PR
 
 Complex project: switch to P9 mode (planner) to decompose
                 → parallel dispatch fullstack-engineer × N
@@ -211,5 +209,5 @@ If Claude in Chrome (or any equivalent browser automation tool) is installed, us
 ## Credits
 
 - **P7/P9/P10 methodology and PUA mode** are adapted from [tanweai/pua](https://github.com/tanweai/pua) (MIT License) by 探微安全实验室 (Tanwei Security Lab). The original is a full Claude Code plugin with KPI reports, leaderboards, self-evolution tracking, and a Loop mode. The full plugin is available at [openpua.ai](https://openpua.ai).
-- **The 12-agent team structure** is the result of months of real-world iteration on what actually works for delegated AI coding.
+- **The 11-agent team structure** is the result of months of real-world iteration on what actually works for delegated AI coding.
 - **Core philosophy** is influenced by Chinese big-tech engineering culture — P-level role ladders, closure-oriented task management, the "three red lines" discipline, and the "never give up" corporate pressure culture.

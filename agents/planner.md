@@ -85,7 +85,7 @@ Before writing any plan, work through these questions:
 | Pre-merge or pre-deploy review | `critic` |
 | Complex tool chaining / MCP integration | `tool-expert` |
 | Looking up API specs, documentation | `web-researcher` |
-| Verifying a suspected security issue with PoC | `vuln-verifier` |
+| Verifying a suspected security issue with PoC | `critic` (inline PoC) |
 
 ## Output Format
 
