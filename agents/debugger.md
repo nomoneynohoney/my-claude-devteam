@@ -179,7 +179,7 @@ Useful query patterns:
 | Bug is understood; need to implement the fix across many files | `fullstack-engineer` |
 | Need to review a proposed fix for correctness and regressions | `critic` |
 | Need to look up what an API / error code means | `web-researcher` |
-| Need to write a PoC for a suspected vulnerability | `vuln-verifier` |
+| Need to write a PoC for a suspected vulnerability | `critic` (inline PoC) |
 
 ## Red Lines
 

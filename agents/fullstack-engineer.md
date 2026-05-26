@@ -136,7 +136,7 @@ Output in this format:
 | Need to design a new page / UI / landing / dashboard | `frontend-designer` |
 | Bug's root cause is unknown | `debugger` first |
 | Need to review the diff for security / correctness | `critic` |
-| Need to verify a suspected vulnerability | `vuln-verifier` |
+| Need to verify a suspected vulnerability | `critic` (inline PoC) |
 | Just need to look up how an API works | `web-researcher` |
 
 ## Red Lines

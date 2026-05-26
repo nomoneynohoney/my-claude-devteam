@@ -3,9 +3,9 @@
 **English · [繁體中文](./README.zh-TW.md)**
 
 > **An entire engineering team for Claude Code**
-> — 12 specialized agents, 15 automation hooks, the P7/P9/P10 methodology that keeps them disciplined, plus bundled **Karpathy Guidelines** baked into the programmer agent.
+> — 15 specialized agents, 15 automation hooks, the P7/P9/P10 methodology that keeps them disciplined, plus bundled **Karpathy Guidelines** baked into the programmer agent.
 
-Most people use Claude Code as a single coder. This config turns it into a full engineering org: **planner, fullstack-engineer, refactor-specialist, migration-engineer, frontend-designer, critic, vuln-verifier, debugger, db-expert, onboarder, tool-expert, web-researcher** — each agent owns a role, each has its own tool permissions, and a strict delegation rulebook decides who touches what.
+Most people use Claude Code as a single coder. This config turns it into a full engineering org: **planner, fullstack-engineer, refactor-specialist, migration-engineer, frontend-designer, critic, debugger, db-expert, onboarder, tool-expert, web-researcher** — each agent owns a role, each has its own tool permissions, and a strict delegation rulebook decides who touches what.
 
 Backed by **corporate-culture-inspired discipline** (closure, fact-driven, exhaustiveness) and **battle-tested hooks** that catch debugger statements, hardcoded secrets, cost overruns, and MCP outages before they hit main.
 
@@ -20,8 +20,7 @@ Backed by **corporate-culture-inspired discipline** (closure, fact-driven, exhau
 | 🔄 **Refactor Lead** | `refactor-specialist` | Large-scale safe refactors. Atomic commits, full callsite verification, single-revert rollback. | Renames, file moves, module extraction across 10+ files |
 | 🚀 **Migration Lead** | `migration-engineer` | Framework / library major-version upgrades. Reads upstream changelog, executes incrementally, verifies at every step. | Next.js 13→14, Vue 2→3, Tailwind 3→4, etc. |
 | 🎨 **Designer** | `frontend-designer` | Builds landing pages, dashboards, and UI that doesn't look like AI slop. Opinionated aesthetic direction, refuses generic output. | New pages, UI redesigns, visual upgrades |
-| 🔍 **Code Reviewer** | `critic` | Finds bugs, security holes, logic errors, edge cases, performance issues. Every finding with file path + line number. No "looks good to me". | Pre-commit, pre-deploy, pre-merge |
-| 🧪 **Pentester** | `vuln-verifier` | Takes the critic's findings and writes actual PoC tests to prove the vulnerability is real — no false positives, no hand-waving. | After critic flags a security issue |
+| 🔍 **Code Reviewer** | `critic` | Finds bugs, security holes, logic errors, edge cases, performance issues. Inline-verifies 🔴 security findings with PoC before closing the report. Every finding with file path + line number. No "looks good to me". | Pre-commit, pre-deploy, pre-merge |
 | 🐛 **Debug Engineer** | `debugger` | Reads logs, constructs hypotheses, verifies, fixes. Never guesses, always traces root cause. Includes log-analyzer. | Bug reports, service incidents, test failures |
 | 🗄 **DB Specialist** | `db-expert` | Reviews schemas, migrations, queries for safety, indexes, locks, race conditions. Paranoid about data loss. | Schema changes, migrations, query optimization |
 | 🗺 **Onboarder** | `onboarder` | First-time codebase exploration. Produces a structured mental model — architecture, entry points, suspicious areas. | Joining a new project, evaluating an open-source repo |
@@ -66,7 +65,7 @@ Each agent is a markdown file under `agents/` with its own system prompt, tool p
    └──────────────┘  └─────────────┘
 ```
 
-**Security-sensitive work** takes a detour: `critic` flags → `vuln-verifier` writes PoC → fix or file PR.
+**Security-sensitive work**: `critic` flags → inline PoC verification → fix or file PR.
 
 ---
 
@@ -172,10 +171,6 @@ The slow methodology ("reproduce, then hypothesize, then verify") is the whole p
 
 On tasks touching 3+ files, dispatching to `planner` first turns a 30-message back-and-forth into one structured Task Prompt. The **six-element contract** (goal / scope / input / output / acceptance / boundaries) forces you to state the Definition of Done before anyone writes code.
 
-### `vuln-verifier` is boring in the best way
-
-Most reported "vulnerabilities" are false positives or partially true. The **PoC-or-it-didn't-happen** protocol converts fuzzy "I think this could be exploited" reports into verdicts with actual program output. Every verdict comes with an attack input **and** a baseline control input — so you prove the vulnerable behavior is triggered by the attack and not by any input.
-
 ---
 
 ## Install (One Command)
@@ -185,7 +180,7 @@ Most reported "vulnerabilities" are false positives or partially true. The **PoC
 /plugin install devteam@my-claude-devteam
 ```
 
-Once installed, all 12 agents and 15 hooks register automatically. Restart Claude Code and your dev team is online.
+Once installed, all 15 agents and 15 hooks register automatically. Restart Claude Code and your dev team is online.
 
 ### Optional: install the methodology document
 
@@ -240,7 +235,7 @@ This repo is **opinionated methodology + tools**, not a kitchen sink. You still 
 ## Credits
 
 - **P7/P9/P10 methodology and PUA mode** are adapted from [**tanweai/pua**](https://github.com/tanweai/pua) (MIT License) by 探微安全实验室 (Tanwei Security Lab). The original is a full Claude Code plugin with KPI reports, leaderboards, self-evolution tracking, and a Loop mode. If you want the full feature set, install it directly from [openpua.ai](https://openpua.ai).
-- **The 12-agent team structure and hooks** are the result of months of real-world iteration — shipping to production, getting burned, iterating again.
+- **The 15-agent team structure and hooks** are the result of months of real-world iteration — shipping to production, getting burned, iterating again.
 - **Core philosophy** is inspired by Chinese big-tech engineering culture: P-level role ladders, closure-oriented task management, the "three red lines" discipline, and the corporate pressure culture that turns "good enough" into "exhaust every option".
 
 ---

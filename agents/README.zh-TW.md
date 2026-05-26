@@ -2,7 +2,7 @@
 
 **[English](./README.md) · 繁體中文**
 
-十二位專職 agents，把「一個 Claude 配無數 prompt」變成「一句話請求，整支工程團隊就上工」。
+十五位專職 agents，把「一個 Claude 配無數 prompt」變成「一句話請求，整支工程團隊就上工」。
 
 ## 名單
 
@@ -18,8 +18,7 @@
 ### 品質與安全
 | Agent | 角色 | Model | 工具 | 主要任務 |
 |-------|------|-------|------|----------|
-| [`critic`](./critic.md) | Code Reviewer | opus | 唯讀 | 找 bug、安全漏洞、邊界條件。每個發現都附 file:line + 修復方向。 |
-| [`vuln-verifier`](./vuln-verifier.md) | Pentester | opus | 唯讀 | 接 critic 發現，實際寫 PoC 證明漏洞真假。零誤報。 |
+| [`critic`](./critic.md) | Code Reviewer | opus | 讀寫 | 找 bug、安全漏洞、邊界條件。🔴 發現 inline 寫 PoC 驗證。每個發現都附 file:line + 修復方向。 |
 | [`debugger`](./debugger.md) | Debug Engineer | opus | 唯讀 | 讀 log、建假設、驗證、修復。不猜測。 |
 | [`db-expert`](./db-expert.md) | DB Specialist | opus | 唯讀 | 審查 schema、migration、query 的安全性、索引、race condition。 |
 
@@ -30,7 +29,7 @@
 | [`tool-expert`](./tool-expert.md) | Platform Engineer | sonnet | 全部 | 選對工具、串接複雜流程、排查工具失敗。 |
 | [`web-researcher`](./web-researcher.md) | Librarian | sonnet | WebSearch/WebFetch | 把不確定變成有出處的事實。 |
 
-> **工具權限說明**：每個 agent 只給最少需要的工具。唯讀型 agents（`planner`、`critic`、`vuln-verifier`、`debugger`、`db-expert`、`onboarder`）只分析、產報告，不修改檔案。執行型 agents（`fullstack-engineer`、`frontend-designer`、`refactor-specialist`、`migration-engineer`、`tool-expert`）有 `Edit` / `Write`。
+> **工具權限說明**：每個 agent 只給最少需要的工具。唯讀型 agents（`planner`、`debugger`、`db-expert`、`onboarder`）只分析、產報告，不修改檔案。`critic` 有 `Write` 以便在 `/tmp/` 建立 PoC 檔案。執行型 agents（`fullstack-engineer`、`frontend-designer`、`refactor-specialist`、`migration-engineer`、`tool-expert`）有 `Edit` / `Write`。
 
 ## 委派矩陣
 
@@ -46,8 +45,7 @@
 | 「修 X 的 bug」 | 先 `debugger`，再 `fullstack-engineer` 修 |
 | 「審查這個 diff 再 merge」 | `critic` |
 | 「審查這個 schema / migration / query」 | `db-expert` |
-| 「審查這段 code 有沒有安全問題」 | `critic`（可能轉派 `vuln-verifier`） |
-| 「確認這個漏洞是真的」 | `vuln-verifier` |
+| 「審查這段 code 有沒有安全問題」 | `critic`（含 inline PoC 驗證） |
 | 「為什麼服務一直 crash」 | `debugger` |
 | 「這個 codebase 在幹嘛」 | `onboarder` |
 | 「API X 怎麼用」 | `web-researcher` |
@@ -85,8 +83,7 @@
 
 ### 模式 5：安全審查
 ```
-你 → critic（掃漏洞）
-     → vuln-verifier（每個發現寫 PoC 出判定）
+你 → critic（掃漏洞，對每個 🔴 發現 inline 寫 PoC 驗證）
      → fullstack-engineer（修被確認的漏洞）
      → critic（驗證修復）
 ```
