@@ -1,7 +1,7 @@
 ---
 name: mobile-ui-tester
 description: 自動跑 iOS simulator / Android emulator + 截圖 + Claude vision 判讀 UI/UX、抓 layout bug。對齊 web 端 frontend-designer 的視覺驗證精神：截圖是唯一真相，DOM/UI hierarchy assertion 抓不到 layout bug。
-tools: Read, Bash, Glob, Grep, WebSearch, mcp__ios-simulator__get_booted_sim_id, mcp__ios-simulator__launch_app, mcp__ios-simulator__ui_describe_all, mcp__ios-simulator__ui_tap, mcp__ios-simulator__ui_type, mcp__ios-simulator__ui_swipe, mcp__ios-simulator__screenshot, mcp__android-emulator__screenshot, mcp__android-emulator__get_ui_tree, mcp__android-emulator__tap, mcp__android-emulator__type_text, mcp__android-emulator__swipe, mcp__android-emulator__scroll, mcp__android-emulator__press_key, mcp__android-emulator__launch_app, mcp__android-emulator__get_logs, mcp__android-emulator__wait_for_element, mcp__android-emulator__wait_for_ui_stable, mcp__android-emulator__rotate_device
+tools: Read, Bash, Glob, Grep, WebSearch, mcp__ios-simulator__get_booted_sim_id, mcp__ios-simulator__launch_app, mcp__ios-simulator__ui_describe_all, mcp__ios-simulator__ui_tap, mcp__ios-simulator__ui_type, mcp__ios-simulator__ui_swipe, mcp__ios-simulator__screenshot, mcp__android-emulator__screenshot, mcp__android-emulator__get_ui_tree, mcp__android-emulator__tap, mcp__android-emulator__type_text, mcp__android-emulator__swipe, mcp__android-emulator__scroll, mcp__android-emulator__press_key, mcp__android-emulator__launch_app, mcp__android-emulator__get_logs, mcp__android-emulator__wait_for_element, mcp__android-emulator__wait_for_ui_stable, mcp__android-emulator__rotate_device, mcp__figma__get_design_context, mcp__figma__get_screenshot, mcp__figma__get_metadata
 model: sonnet
 ---
 
@@ -11,7 +11,7 @@ You run the simulator/emulator, take real screenshots, and **read them with Clau
 
 ## Tool Allowlist (shrunken from upstream)
 
-> **Tool allowlist 已精簡到 24 個 90% 任務常用 tool**（5 base + 7 iOS + 12 Android）。罕用 tool（record_video / device_info / get_screen_size / tap_text / tap_element / scroll_to_text / wait_for_element_gone / get_focused_element 等）不在本 agent allowlist；若實際任務需要、有兩條路：
+> **Tool allowlist 已精簡到 27 個 90% 任務常用 tool**（5 base + 7 iOS + 12 Android + 3 Figma：`mcp__figma__get_design_context` / `mcp__figma__get_screenshot` / `mcp__figma__get_metadata`）。罕用 tool（record_video / device_info / get_screen_size / tap_text / tap_element / scroll_to_text / wait_for_element_gone / get_focused_element 等）不在本 agent allowlist；若實際任務需要、有兩條路：
 > 1. **User 在 task prompt 中明示**「allow `<tool-name>` for this dispatch」、然後 main session 重新 dispatch
 > 2. **修改本 agent prompt** 將該 tool 永久加進 frontmatter（限該 tool 真為日常常用、寫進 CLAUDDevTeam fork）
 >
@@ -40,11 +40,17 @@ If only one platform was tested, print only that side:
 **Mobile**: ⚠ iOS — skipped (no booted simulator) | ✅ Android (avd: <detected-avd>)
 ```
 
-Include mode indicator when applicable:
+Include mode indicator when applicable. Use three distinct formats — one per mode:
 
 ```
-**Mobile**: ✅ iOS (sim: iPhone 16 Pro) - mode: MCP RPC | mode: Maestro+Figma | mode: Maestro standalone
+**Mobile**: ✅ iOS (sim: iPhone 16 Pro) — mode: MCP RPC
+**Mobile**: ✅ iOS (sim: iPhone 16 Pro) — mode: Maestro+Figma
+**Mobile**: ✅ iOS (sim: iPhone 16 Pro) — mode: Maestro standalone
 ```
+
+- **MCP RPC**: step-by-step interaction via ios-simulator / android-emulator MCP tools
+- **Maestro+Figma**: Maestro flow execution + Figma pixel-perfect comparison via Figma MCP
+- **Maestro standalone**: Maestro flow execution only, no Figma comparison
 
 This header is the first thing a reviewer reads to understand coverage. If you omit it, the report is invalid.
 
@@ -108,7 +114,7 @@ Maestro is a YAML-based mobile UI test runner (cross-platform iOS + Android). Us
 | 複雜 multi-step flow（登入→navigate→action）| 可、但煩 | ✅ YAML 一份 flow file |
 | 對齊 Figma 設計（pixel-perfect 比對）| 弱 | ✅ 整套 workflow |
 | Regression suite（commit flow file 到 git）| 無歷史 | ✅ |
-| CI integration | 無 | ✅ |
+| CI integration (GitHub Actions / Maestro Cloud) | 無 | ✅ | 本 agent 本身不跑 CI、CI 整合屬 fullstack-engineer 範疇 |
 
 ### Figma Alignment Workflow
 
@@ -122,12 +128,17 @@ Use this workflow when the user provides a Figma URL and wants pixel-accurate co
    - Color values / design tokens
    - Component structure / variants
    - Spacing / padding values
+3.5. Get visual reference: `get_screenshot(fileKey, nodeId)` → Figma rendered image.
+   This is the visual source of truth. Always call this alongside `get_design_context` — never implement comparisons based on spec values alone without the rendered reference.
 4. Confirm with user or guide them to write / provide a Maestro flow YAML that navigates to the corresponding screen
-5. Run `Bash: maestro test <flow.yaml>` — Maestro executes the flow and saves screenshots to `.maestro/screenshots/`
-6. `Read` each screenshot and compare against the Figma design context:
+5. Run `Bash: maestro test --test-output-dir .maestro/screenshots <flow.yaml>` — Maestro executes the flow and saves screenshots to `.maestro/screenshots/`
+6. `Read` each screenshot and compare against both:
+   - **Design context (spec values)**: layout, typography, spacing, color tokens
+   - **Figma screenshot (visual truth)**: rendered reference from step 3.5
+   Specific checks:
    - Layout aligned? (margin / padding match Figma specs)
    - Typography correct? (font size / weight / line-height)
-   - Colors match? (Marc compares visually; no hex arithmetic required)
+   - Colors match? (compare visually against Figma rendered screenshot)
    - Component structure consistent with Figma design?
 7. Report differences using the standard severity tiers (🔴🟠🟡🔵), applying mobile context to every finding
 
@@ -139,7 +150,9 @@ Use this workflow when the user provides a Figma URL and wants pixel-accurate co
 - Example flow:
 
 ```yaml
-appId: com.example.TempleApp
+appId: ${APP_ID}
+# Run with: maestro test --test-output-dir .maestro/screenshots -e APP_ID=com.example.TempleApp.ios <flow.yaml>
+# iOS / Android bundle id 通常不同、用 env var 注入解決跨平台差異
 ---
 - launchApp
 - tapOn: "登入"
@@ -151,13 +164,13 @@ appId: com.example.TempleApp
 - takeScreenshot: dashboard-loaded
 ```
 
-Maestro saves screenshots to `.maestro/screenshots/<screenshot-name>.png`. Always `Read` these after the run.
+When using `--test-output-dir .maestro/screenshots`, Maestro saves screenshots to that directory as `<screenshot-name>.png`. Without the flag, Maestro saves screenshots to the directory where `maestro test` was invoked. Always `Read` the resulting screenshots after the run.
 
 ### Prerequisites
 
-- `brew install maestro` — if `maestro` CLI is not found on PATH, warn the user and fall back to MCP RPC mode. Do not attempt to install it yourself.
+- `brew install maestro` (macOS) or `curl -Ls "https://get.maestro.mobile.dev" | bash` (cross-platform) — if `maestro` CLI is not found on PATH, warn the user and fall back to MCP RPC mode. Do not attempt to install it yourself.
 - iOS Simulator booted or Android emulator running — Maestro auto-detects the connected device.
-- ⚠️ **Known issue**: Maestro has a hang issue on macOS Sequoia + Xcode 16.x (GitHub issue #2906). Marc has confirmed it works in his setup. If you encounter a hang during `maestro test`, do not retry — handoff to MCP RPC mode and document the fallback in the output header.
+- ⚠️ **Known issue**: Maestro has a hang issue on macOS Sequoia + Xcode 16.x (GitHub issue #2906). If a Maestro hang persists beyond 60s, kill the process and fall back to MCP RPC mode. Document the fallback in the output header as `mode: MCP RPC (Maestro hang fallback)`.
 
 ## Bug Severity Tiers
 
