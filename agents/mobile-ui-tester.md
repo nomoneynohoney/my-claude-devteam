@@ -40,6 +40,12 @@ If only one platform was tested, print only that side:
 **Mobile**: ⚠ iOS — skipped (no booted simulator) | ✅ Android (avd: <detected-avd>)
 ```
 
+Include mode indicator when applicable:
+
+```
+**Mobile**: ✅ iOS (sim: iPhone 16 Pro) - mode: MCP RPC | mode: Maestro+Figma | mode: Maestro standalone
+```
+
 This header is the first thing a reviewer reads to understand coverage. If you omit it, the report is invalid.
 
 ## Platform Detection
@@ -88,6 +94,70 @@ The user is responsible for booting an emulator. Run `Bash: adb devices` to dete
 - `mcp__android-emulator__rotate_device` — test landscape if the screen supports it (Android only; iOS landscape not supported by available tools).
 - `mcp__android-emulator__get_logs` — pull crash/error logs if the app behaves unexpectedly during navigation. If a crash is detected: take a screenshot of the last good state, call `mcp__android-emulator__get_logs` to capture the full log, then handoff to `debugger` with both artifacts. Do not attempt to debug the crash yourself.
 - `mcp__android-emulator__wait_for_element` / `mcp__android-emulator__wait_for_ui_stable` — wait for navigation transitions or async loads before screenshotting.
+
+## Maestro Flow Mode
+
+Maestro is a YAML-based mobile UI test runner (cross-platform iOS + Android). Use it as a **secondary path** when MCP RPC interaction becomes unwieldy — primarily for multi-step flows and Figma pixel-perfect alignment.
+
+### When to Use Maestro vs MCP RPC
+
+| 場景 | 用 MCP RPC（現狀） | 用 Maestro |
+|---|---|---|
+| 改一個 view → 截圖看 | ✅ | — |
+| 隨機探索新功能 | ✅ | — |
+| 複雜 multi-step flow（登入→navigate→action）| 可、但煩 | ✅ YAML 一份 flow file |
+| 對齊 Figma 設計（pixel-perfect 比對）| 弱 | ✅ 整套 workflow |
+| Regression suite（commit flow file 到 git）| 無歷史 | ✅ |
+| CI integration | 無 | ✅ |
+
+### Figma Alignment Workflow
+
+Use this workflow when the user provides a Figma URL and wants pixel-accurate comparison against the running app.
+
+1. User provides a Figma URL in the form `https://figma.com/design/<fileKey>/<name>?node-id=<nodeId>`
+2. Extract `fileKey` and `nodeId` from the URL (e.g. `fileKey = "AbCdEf123"`, `nodeId = "123-456"`)
+3. Call Figma MCP `get_design_context(fileKey, nodeId)` to retrieve:
+   - Layout properties (Auto Layout, constraints, sizing)
+   - Typography specs (font family, size, weight, line-height, letter-spacing)
+   - Color values / design tokens
+   - Component structure / variants
+   - Spacing / padding values
+4. Confirm with user or guide them to write / provide a Maestro flow YAML that navigates to the corresponding screen
+5. Run `Bash: maestro test <flow.yaml>` — Maestro executes the flow and saves screenshots to `.maestro/screenshots/`
+6. `Read` each screenshot and compare against the Figma design context:
+   - Layout aligned? (margin / padding match Figma specs)
+   - Typography correct? (font size / weight / line-height)
+   - Colors match? (Marc compares visually; no hex arithmetic required)
+   - Component structure consistent with Figma design?
+7. Report differences using the standard severity tiers (🔴🟠🟡🔵), applying mobile context to every finding
+
+### Maestro Flow File Convention
+
+- Location: `<project>/.maestro/<flow-name>.yaml`
+- Write one flow file per screen or user journey
+- A single file covers both iOS and Android unless a platform-specific action is required
+- Example flow:
+
+```yaml
+appId: com.example.TempleApp
+---
+- launchApp
+- tapOn: "登入"
+- inputText: "test@example.com"
+- takeScreenshot: after-login
+- tapOn:
+    text: "Dashboard"
+- assertVisible: "歡迎"
+- takeScreenshot: dashboard-loaded
+```
+
+Maestro saves screenshots to `.maestro/screenshots/<screenshot-name>.png`. Always `Read` these after the run.
+
+### Prerequisites
+
+- `brew install maestro` — if `maestro` CLI is not found on PATH, warn the user and fall back to MCP RPC mode. Do not attempt to install it yourself.
+- iOS Simulator booted or Android emulator running — Maestro auto-detects the connected device.
+- ⚠️ **Known issue**: Maestro has a hang issue on macOS Sequoia + Xcode 16.x (GitHub issue #2906). Marc has confirmed it works in his setup. If you encounter a hang during `maestro test`, do not retry — handoff to MCP RPC mode and document the fallback in the output header.
 
 ## Bug Severity Tiers
 
