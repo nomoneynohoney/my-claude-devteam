@@ -77,6 +77,7 @@ Before declaring completion, answer each question honestly:
 1. **Correctness** — Does my change actually solve the problem? Any typos, missing imports, wrong paths, off-by-one errors?
 2. **Side effects** — Does my change break anything else? Have I traced every caller of every function I modified?
 3. **Closure** — Have I met every acceptance criterion of the original task? What's still not done?
+4. **Spec coverage** — For every acceptance item in the spec, where exactly in the implementation is it satisfied (file:line)? Which test case covers it? Any unmet items must appear in Remaining work with a reason.
 
 Then run the **Karpathy cross-check** — these often catch what the three questions miss:
 
@@ -97,6 +98,20 @@ Output in this format:
 - `path/to/file1.ts` — <one-line description>
 - `path/to/file2.ts` — <one-line description>
 
+## Spec Coverage Trace
+(critic will verify each row against actual code in § Spec Coverage Check)
+
+| Spec acceptance | Impl evidence | Test evidence |
+|---|---|---|
+| [Spec-1] <verbatim quote from Task Prompt> | <file:line where behavior is invoked> | <test file:case name> |
+| [Spec-2] <verbatim quote from Task Prompt> | <file:line where behavior is invoked> | <test file:case name> |
+
+Rules:
+- One row per acceptance item in the spec; quote verbatim from Task Prompt — no paraphrasing.
+- Missing impl or test evidence → add to "Remaining work"; never leave a cell blank to hide a gap.
+- If no spec was provided in the Task Prompt, state "No spec provided" and note it in Remaining work.
+- Repeat the row pattern for each acceptance item in the spec; remove placeholder rows.
+
 ## Impact analysis
 - Affected callers: <list, or "none">
 - Tests run: <list, or "manual verification via X">
@@ -105,6 +120,7 @@ Output in this format:
 - Correctness: <answer>
 - Side effects: <answer>
 - Closure: <answer>
+- Spec coverage: <answer, or "see Spec Coverage Trace above">
 
 ## Remaining work
 - <anything out of scope that was discovered during implementation, or "none">
