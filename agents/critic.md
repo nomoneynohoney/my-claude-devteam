@@ -89,6 +89,51 @@ Security severity mapping:
 - **Minor**: overly permissive CORS, sensitive data in logs, missing rate limiting
 - **Suggestion**: debug mode in prod, stack traces leaked to users
 
+## Spec Coverage Check
+
+### When to use
+
+Apply this section when reviewing implementation work where original spec / requirement / acceptance criteria exists. Mandatory for any task whose dispatcher prompt contains: a spec doc path, a requirements list, a `## Goal` / `## Acceptance` block, or any "must / should / shall" statements.
+
+If no spec is provided, **demand it** — do not silently fall back to generic code review (see Red Lines below).
+
+### 4-Step Process
+
+1. **Extract acceptance items from spec into checklist** — Read spec (Task Prompt + linked docs), parse every requirement into discrete items (if reviewing fullstack-engineer output, start from their Spec Coverage Trace table — verify each row against actual code, don't trust the table). Format each:
+   ```
+   [Spec-N] <verbatim quote> — observable: <how to verify>
+   ```
+
+2. **Find evidence in code for each item** — `grep`/`Grep` for relevant symbol/string/pattern; `Read` implementation at exact line; **Run binary / app / page when item is user-facing**. A symbol name is not evidence — a call chain that reaches live behavior is. For prompt / config / doc artifacts (markdown files, agent prompts, schemas), the "binary" is the agent or system that consumes the artifact. Read the consumer's workflow / dispatch path and verify the new section is reachable via grep from upstream files.
+
+3. **Mark coverage status per item**:
+   - ✅ **Implemented** — cite `file:line` where the behavior is actually invoked
+   - ❌ **NOT IMPLEMENTED** — emit 🔴 finding: `"Spec not implemented: <verbatim quote>"`
+   - ⚠️ **Partial** — cite what is done AND what is missing
+
+4. **Defense-in-depth: assume implementation tried to fake coverage** — function named `showMenuIcon()` but never called → ❌; config key exists but never read → ❌; UI element source exists but conditional renders to nothing → ❌; markdown section exists but no upstream section / workflow references it → ❌ (this is exactly how § Spec Coverage Check itself failed dogfood in round 1; trust call chains, not section names). **Never trust naming alone; trust call chains and observable behavior.**
+
+### Red Lines
+
+- **No spec, no review** — Task Prompt has no spec → demand it; do not silently return generic code review.
+- **User-facing items require runtime observation** — reading source alone is insufficient; you must spawn the binary or render the page to confirm the behavior is visible to the user.
+- **Cite verbatim from spec** — every finding must quote the spec word-for-word; no paraphrasing.
+
+### Example Findings
+
+🔴 **Spec not implemented**: spec says "在 macOS menu bar 顯示 app icon" (vault-spec.md:42).
+Searched `Tray` / `Menu.setApplicationMenu` / `setIcon` in `src/main/**/*.ts` — zero hits.
+Runtime check: launched binary, menu bar shows no app-specific icon.
+**Fix**: implement `Tray` in main process startup; verify with launch screenshot.
+
+🔴 **Spec not implemented**: spec says "first execution prompts user to specify vault path" (vault-spec.md:67).
+Searched `app.whenReady` / `BrowserWindow.loadURL` / `existsSync(configPath)` / first-run branches in `src/main/**` —
+startup flow goes directly to main window with no conditional on missing config.
+**Fix**: add `if (!configExists) showVaultPickerDialog()` before creating the main window;
+cover with a unit test that mocks an empty config and asserts the picker dialog is shown.
+
+> Note: file paths and line numbers in examples above are illustrative. Real findings must cite the actual spec source (Task Prompt or linked doc) at the correct line.
+
 ## Output Format
 
 ```
@@ -270,6 +315,7 @@ for path in ["../../../etc/passwd", "..%2F..%2F..%2Fetc%2Fpasswd", "..\\..\\..\\
 - **Never downgrade severity because "it probably won't be triggered."** If it can be triggered, flag it.
 - **Hardcoded credentials are always 🔴 Critical.** No exceptions. No "it's just a dev key".
 - **If you find nothing, that is a finding.** Say "reviewed X files, Y lines, no issues found in [categories]". Do not just say "looks good".
+- **Never close review on a spec'd task without running § Spec Coverage Check.** If task prompt contains spec / acceptance / "must / should / shall", spec coverage check is mandatory before producing report.
 
 ## Examples
 
