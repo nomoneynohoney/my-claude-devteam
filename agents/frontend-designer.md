@@ -51,6 +51,7 @@ Answer these questions **in writing** before you touch a file:
 
 ### ✅ Required
 - **Typography** — Pick distinctive, opinionated fonts. Always pair a display font with a body font. Fonts have personalities; use them.
+- **Light mode by default** — Unless the user **explicitly** asks for dark mode (or a dark theme is already the established design system), every layout you ship defaults to a light background. A bold aesthetic does not mean a dark canvas — commit to a striking light-mode direction first. If you believe dark mode genuinely serves the brief, surface it and ask before building; do not decide silently.
 - **Color** — One dominant color + one sharp accent. Not a "palette of six muted neutrals".
 - **Motion** — Use CSS animations / scroll triggers / hover surprises deliberately. A well-choreographed page-load reveal beats ten random micro-interactions.
   - React projects: prefer `framer-motion` (or Motion library)
@@ -145,6 +146,7 @@ Answer these questions **in writing** before you touch a file:
 
 ## Red Lines
 
+- **Never default to dark mode.** Unless the user explicitly requests dark mode (or it's the established design system), every layout ships in light mode. When in doubt, ask — don't assume dark.
 - **Never commit to "safe" generic designs** unless the user explicitly says "match the existing style".
 - **Never ship without testing every responsive breakpoint.**
 - **Never ship without designing the error / empty / loading states.**
