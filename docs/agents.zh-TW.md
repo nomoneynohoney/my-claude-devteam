@@ -1,6 +1,6 @@
 # 團隊成員
 
-**[English](./README.md) · 繁體中文**
+**[English](./agents.md) · 繁體中文**
 
 十五位專職 agents，把「一個 Claude 配無數 prompt」變成「一句話請求，整支工程團隊就上工」。
 
@@ -9,25 +9,25 @@
 ### 建造與交付
 | Agent | 角色 | Model | 工具 | 主要任務 |
 |-------|------|-------|------|----------|
-| [`planner`](./planner.md) | Tech Lead | opus | 唯讀 | 把模糊需求拆成 Task Prompts，每個都有六要素契約。絕不寫程式。 |
-| [`fullstack-engineer`](./fullstack-engineer.md) | Senior Engineer | sonnet | 讀寫 | 用 P7 方法論交付功能。交付前自審。 |
-| [`frontend-designer`](./frontend-designer.md) | Designer | opus | 讀寫 | 打造有美學主張的介面，拒絕 AI slop。 |
-| [`refactor-specialist`](./refactor-specialist.md) | Refactor Lead | opus | 讀寫 | 大規模安全重構，原子 commit、完整 callsite 驗證。 |
-| [`migration-engineer`](./migration-engineer.md) | Migration Lead | opus | 讀寫 | Framework / 函式庫主版本升級，分階段執行、可回滾。 |
+| [`planner`](../agents/planner.md) | Tech Lead | opus | 唯讀 | 把模糊需求拆成 Task Prompts，每個都有六要素契約。絕不寫程式。 |
+| [`fullstack-engineer`](../agents/fullstack-engineer.md) | Senior Engineer | sonnet | 讀寫 | 用 P7 方法論交付功能。交付前自審。 |
+| [`frontend-designer`](../agents/frontend-designer.md) | Designer | opus | 讀寫 | 打造有美學主張的介面，拒絕 AI slop。 |
+| [`refactor-specialist`](../agents/refactor-specialist.md) | Refactor Lead | opus | 讀寫 | 大規模安全重構，原子 commit、完整 callsite 驗證。 |
+| [`migration-engineer`](../agents/migration-engineer.md) | Migration Lead | opus | 讀寫 | Framework / 函式庫主版本升級，分階段執行、可回滾。 |
 
 ### 品質與安全
 | Agent | 角色 | Model | 工具 | 主要任務 |
 |-------|------|-------|------|----------|
-| [`critic`](./critic.md) | Code Reviewer | opus | 讀寫 | 找 bug、安全漏洞、邊界條件。🔴 發現 inline 寫 PoC 驗證。每個發現都附 file:line + 修復方向。 |
-| [`debugger`](./debugger.md) | Debug Engineer | opus | 唯讀 | 讀 log、建假設、驗證、修復。不猜測。 |
-| [`db-expert`](./db-expert.md) | DB Specialist | opus | 唯讀 | 審查 schema、migration、query 的安全性、索引、race condition。 |
+| [`critic`](../agents/critic.md) | Code Reviewer | opus | 讀寫 | 找 bug、安全漏洞、邊界條件。🔴 發現 inline 寫 PoC 驗證。每個發現都附 file:line + 修復方向。 |
+| [`debugger`](../agents/debugger.md) | Debug Engineer | opus | 唯讀 | 讀 log、建假設、驗證、修復。不猜測。 |
+| [`db-expert`](../agents/db-expert.md) | DB Specialist | opus | 唯讀 | 審查 schema、migration、query 的安全性、索引、race condition。 |
 
 ### 探索與支援
 | Agent | 角色 | Model | 工具 | 主要任務 |
 |-------|------|-------|------|----------|
-| [`onboarder`](./onboarder.md) | Codebase Explorer | sonnet | 唯讀 | 第一次接觸 codebase 時，用一份報告產出結構化 mental model。 |
-| [`tool-expert`](./tool-expert.md) | Platform Engineer | haiku | 全部 | 選對工具、串接複雜流程、排查工具失敗。 |
-| [`web-researcher`](./web-researcher.md) | Librarian | haiku | WebSearch/WebFetch | 把不確定變成有出處的事實。 |
+| [`onboarder`](../agents/onboarder.md) | Codebase Explorer | sonnet | 唯讀 | 第一次接觸 codebase 時，用一份報告產出結構化 mental model。 |
+| [`tool-expert`](../agents/tool-expert.md) | Platform Engineer | haiku | 全部 | 選對工具、串接複雜流程、排查工具失敗。 |
+| [`web-researcher`](../agents/web-researcher.md) | Librarian | haiku | WebSearch/WebFetch | 把不確定變成有出處的事實。 |
 
 > **工具權限說明**：每個 agent 只給最少需要的工具。唯讀型 agents（`planner`、`debugger`、`db-expert`、`onboarder`）只分析、產報告，不修改檔案。`critic` 有 `Write` 以便在 `/tmp/` 建立 PoC 檔案。執行型 agents（`fullstack-engineer`、`frontend-designer`、`refactor-specialist`、`migration-engineer`、`tool-expert`）有 `Edit` / `Write`。
 
