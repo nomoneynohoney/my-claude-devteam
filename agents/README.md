@@ -11,9 +11,9 @@ Fifteen specialized agents that replace "one Claude, many prompts" with "one req
 |-------|------|-------|-------|-------------|
 | [`planner`](./planner.md) | Tech Lead | opus | Read-only | Breaks fuzzy requirements into Task Prompts with a six-element contract. Never writes code. |
 | [`fullstack-engineer`](./fullstack-engineer.md) | Senior Engineer | sonnet | Read/Write | Ships features using the P7 methodology. Self-reviews before handoff. |
-| [`frontend-designer`](./frontend-designer.md) | Designer | sonnet | Read/Write | Builds memorable UI with a committed aesthetic direction. Rejects AI slop. |
-| [`refactor-specialist`](./refactor-specialist.md) | Refactor Lead | sonnet | Read/Write | Large-scale safe refactors. Atomic commits, full callsite verification. |
-| [`migration-engineer`](./migration-engineer.md) | Migration Lead | sonnet | Read/Write | Framework / library major-version upgrades. Incremental, verified, reversible. |
+| [`frontend-designer`](./frontend-designer.md) | Designer | opus | Read/Write | Builds memorable UI with a committed aesthetic direction. Rejects AI slop. |
+| [`refactor-specialist`](./refactor-specialist.md) | Refactor Lead | opus | Read/Write | Large-scale safe refactors. Atomic commits, full callsite verification. |
+| [`migration-engineer`](./migration-engineer.md) | Migration Lead | opus | Read/Write | Framework / library major-version upgrades. Incremental, verified, reversible. |
 
 ### Quality & safety
 | Agent | Role | Model | Tools | Primary job |
@@ -26,8 +26,8 @@ Fifteen specialized agents that replace "one Claude, many prompts" with "one req
 | Agent | Role | Model | Tools | Primary job |
 |-------|------|-------|-------|-------------|
 | [`onboarder`](./onboarder.md) | Codebase Explorer | sonnet | Read-only | First-time codebase exploration. Builds a structured mental model in one report. |
-| [`tool-expert`](./tool-expert.md) | Platform Engineer | sonnet | All | Picks the right tool, chains workflows, troubleshoots tool failures. |
-| [`web-researcher`](./web-researcher.md) | Librarian | sonnet | WebSearch/WebFetch | Turns uncertainty into verified facts with sources. |
+| [`tool-expert`](./tool-expert.md) | Platform Engineer | haiku | All | Picks the right tool, chains workflows, troubleshoots tool failures. |
+| [`web-researcher`](./web-researcher.md) | Librarian | haiku | WebSearch/WebFetch | Turns uncertainty into verified facts with sources. |
 
 > **Note on tools**: agents have the minimum tools they need. Read-only agents (`planner`, `debugger`, `db-expert`, `onboarder`) analyze and produce reports without modifying files. `critic` has `Write` to create PoC files in `/tmp/`. Execution agents (`fullstack-engineer`, `frontend-designer`, `refactor-specialist`, `migration-engineer`, `tool-expert`) have `Edit` / `Write`.
 
