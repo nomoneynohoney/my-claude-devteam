@@ -115,6 +115,12 @@ The skill ships under [`skills/`](./skills/) and is reused via path reference fr
 
 Source: [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT).
 
+### 🎨 `frontend-design` (external dependency — not bundled)
+
+**Used by:** `frontend-designer` (aesthetic engine)
+
+The `frontend-designer` agent delegates all visual decision-making — design system, typography, color, motion, anti-AI-slop discipline — to Anthropic's official [`frontend-design`](https://github.com/anthropics/skills) skill. This repo does **not** vendor a copy; the agent references the skill by name and expects it to be installed in your environment. Install it from [`anthropics/skills`](https://github.com/anthropics/skills) (clone the repo and point your client at its `skills/` directory). The agent layers team-specific rules on top: light-mode-by-default, the three red lines, the P7 flow, and the `[P7-COMPLETION]` handoff.
+
 ---
 
 ## The Automation (Hooks)
@@ -229,6 +235,7 @@ This repo is **opinionated methodology + tools**, not a kitchen sink. You still 
 - **Your own hook configuration** for paths and thresholds
 - **Your own CLAUDE.md project sections** — infrastructure, repo lists, deployment commands (keep these out of the public repo for security)
 - **Third-party skill packs** — this repo bundles only [Karpathy Guidelines](./skills/karpathy-guidelines/SKILL.md) (MIT, attributed); other skill packs are on you
+- **Anthropic's [`frontend-design`](https://github.com/anthropics/skills) skill** — a runtime dependency of the `frontend-designer` agent (referenced by name, not bundled). Install it from `anthropics/skills` or the `frontend-designer` agent has no aesthetic engine to delegate to.
 
 ---
 

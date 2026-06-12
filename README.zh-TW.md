@@ -115,6 +115,12 @@ Skill 放在 [`skills/`](./skills/) 底下，透過 agent prompt 的路徑引用
 
 來源：[forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills)（MIT）。
 
+### 🎨 `frontend-design`（外部依賴 — 非內建）
+
+**使用者：** `frontend-designer`（美學引擎）
+
+`frontend-designer` agent 把所有視覺決策 —— 設計系統、字體、配色、動效、anti-AI-slop 紀律 —— 委派給 Anthropic 官方的 [`frontend-design`](https://github.com/anthropics/skills) skill。本 repo **不** vendored 一份副本；agent 以名稱引用該 skill，預期它已安裝在你的環境。請從 [`anthropics/skills`](https://github.com/anthropics/skills) 安裝（clone 該 repo，把 client 指向它的 `skills/` 目錄）。agent 在其上疊加團隊專屬規則：預設 light mode、三條紅線、P7 flow、`[P7-COMPLETION]` 交付格式。
+
 ---
 
 ## 自動化（Hooks）
@@ -229,6 +235,7 @@ Claude：[派出 fullstack-engineer 走 P7 方法論]
 - **你自己的 hook 設定**（路徑和閾值）
 - **你自己的 CLAUDE.md 專案區塊** — 基礎設施、repo 清單、部署指令（基於安全考量，不要放在公開 repo）
 - **第三方 skill packs** — 這個 repo 只內建 [Karpathy Guidelines](./skills/karpathy-guidelines/SKILL.md)（MIT，已標註出處），其他 skill packs 自備
+- **Anthropic 官方 [`frontend-design`](https://github.com/anthropics/skills) skill** — `frontend-designer` agent 的執行期依賴（以名稱引用、非內建副本）。請從 `anthropics/skills` 安裝，否則 `frontend-designer` 沒有可委派的美學引擎。
 
 ---
 
