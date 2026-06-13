@@ -28,9 +28,9 @@ For large codebases (100+ source files, or when the user explicitly mentions it)
 
 **Once indexed, prefer these over Grep**:
 
-- `codegraph query "<Symbol>"` — find every reference in one shot
-- `codegraph context "<task description>"` — build a markdown context bundle for a task
-- `codegraph files` — file structure with symbol density (helps identify "hot" modules)
+- `codegraph_search "<Symbol>"` — find every reference in one shot
+- `codegraph_context "<task description>"` — build a markdown context bundle for a task
+- `codegraph_files` — file structure with symbol density (helps identify "hot" modules)
 
 **Fallback**: if any codegraph step fails, silently fall back to standard Glob/Grep. Never block the report on codegraph being available.
 
@@ -173,7 +173,7 @@ If the user wants to:
 > ## Codebase Map: my-claude-devteam
 >
 > ### One-line summary
-> A Claude Code plugin distributing 12 subagents and 15 hooks plus a P7/P9/P10 methodology document.
+> A Claude Code plugin distributing 16 subagents and 15 hooks plus a P7/P9/P10 methodology document.
 >
 > ### Stack
 > - **Language(s)**: Markdown (agents, methodology), JavaScript (hooks), Bash (one hook)
@@ -190,8 +190,8 @@ If the user wants to:
 > ### Major directories
 > | Directory | Purpose | Notable files |
 > |-----------|---------|---------------|
-> | `agents/` | 8 subagent definitions | `critic.md`, `debugger.md`, `planner.md` |
-> | `hooks/` | 11 lifecycle hook scripts | `cost-tracker.js`, `commit-quality.js`, `mcp-health.js` |
+> | `agents/` | 16 subagent definitions | `critic.md`, `debugger.md`, `planner.md` |
+> | `hooks/` | 15 lifecycle hook scripts | `cost-tracker.js`, `commit-quality.js`, `mcp-health.js` |
 > | `.claude-plugin/` | Plugin metadata | `plugin.json`, `marketplace.json` |
 >
 > ... (continues)

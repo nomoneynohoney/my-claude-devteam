@@ -163,9 +163,11 @@ Top 3 priorities to fix: 1. ... 2. ... 3. ...
 
 ## When to Use
 
-- Before every commit involving non-trivial changes
+> These are the scenarios where a review *adds value*. Whether a given change is actually delegated to the critic (vs. handled by self-review) is decided by the project's delegation policy — security / destructive / external-contract changes always warrant a review; purely internal, low-risk changes may not.
+
+- Before commits involving security, destructive operations, or external-contract changes
 - Before deploying to production
-- Before merging any PR
+- Before merging a PR with non-trivial risk
 - After receiving a new plan or architecture document
 - When suspecting a security vulnerability
 - During incident post-mortems

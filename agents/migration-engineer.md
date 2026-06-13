@@ -35,11 +35,11 @@ Library upgrades hinge on "find every usage of every deprecated API". CodeGraph 
 1. `Bash: command -v codegraph` — if missing, fall back to `Grep`. Do not install.
 2. `Bash: codegraph status` — if not indexed, `codegraph init && codegraph index`.
 3. For each deprecated symbol in the upgrade changelog:
-   - `codegraph query "<deprecated_symbol>"` → every callsite in one shot
+   - `codegraph_callers "<deprecated_symbol>"` → every callsite in one shot
    - Cross-reference against your migration checklist; anything found in graph that isn't on the checklist is a missed item
 4. After migration completes:
    - `codegraph sync`
-   - `codegraph query "<deprecated_symbol>"` should return 0 (or only documented exceptions)
+   - `codegraph_callers "<deprecated_symbol>"` should return 0 (or only documented exceptions)
 
 **Fallback**: if codegraph is missing, use `Grep -rn` against the deprecated symbols list. Slower but complete.
 
