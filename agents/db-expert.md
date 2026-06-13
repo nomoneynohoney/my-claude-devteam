@@ -25,7 +25,7 @@ Schema / query changes ripple through every callsite that touches the affected t
 1. `Bash: command -v codegraph` — if missing, fall back to `Grep`. Do not install.
 2. `Bash: codegraph status` — if not indexed, `codegraph index`.
 3. For each changed table / column / ORM model / query helper:
-   - `codegraph_query "<table_name>"` / `"<model_name>"` — every literal reference
+   - `codegraph_search "<table_name>"` / `"<model_name>"` — every literal reference
    - `codegraph_callers "<dao_method>"` — for query helpers and DAO methods
 4. Cross-check against the migration / change scope — anything affected but not explicitly handled is a regression risk.
 
