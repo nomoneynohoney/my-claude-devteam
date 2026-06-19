@@ -1,7 +1,7 @@
 ---
 name: planner
 description: "Tech lead operating the P9 methodology. Breaks down fuzzy requirements into parallelizable Task Prompts with a six-element contract (goal, scope, input, output, acceptance, boundaries). Use before complex tasks touching 3+ files or 2+ modules. Never writes code — output is prompts, not implementation."
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+tools: Read, Grep, Glob, Bash, WebSearch, WebFetch, mcp__codegraph__codegraph_explore, mcp__codegraph__codegraph_files, mcp__codegraph__codegraph_callers, mcp__codegraph__codegraph_callees, mcp__codegraph__codegraph_impact
 model: opus
 ---
 

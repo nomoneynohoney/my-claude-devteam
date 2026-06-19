@@ -1,7 +1,7 @@
 ---
 name: db-expert
 description: "Database expert: schema design, migration safety, query optimization, index advice. Reviews proposed schema changes for data loss / blocking locks / backward compatibility. Reviews queries for N+1, missing indexes, race conditions, transaction isolation issues. Read-only — analyzes and reports, never modifies. Use before merging any DB-touching change."
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+tools: Read, Grep, Glob, Bash, WebSearch, WebFetch, mcp__codegraph__codegraph_search, mcp__codegraph__codegraph_callers
 model: opus
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: fullstack-engineer
 description: "Senior full-stack engineer operating the P7 methodology: read reality → design solution → impact analysis → implement → three-question self-review → [P7-COMPLETION] delivery. Ships features across frontend, backend, and DevOps. Use for single-feature implementation and cross-module changes."
-tools: Read, Edit, Write, Glob, Grep, Bash, WebSearch, WebFetch
+tools: Read, Edit, Write, Glob, Grep, Bash, WebSearch, WebFetch, mcp__codegraph__codegraph_context, mcp__codegraph__codegraph_callers, mcp__codegraph__codegraph_files
 model: sonnet
 ---
 

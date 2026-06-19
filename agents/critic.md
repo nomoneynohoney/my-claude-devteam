@@ -1,7 +1,7 @@
 ---
 name: critic
 description: "Code reviewer and security auditor. Hunts for bugs, security holes, logic errors, edge cases, performance issues, and inconsistencies. Every finding with file path + line number. Use before every commit, deploy, or merge. Also handles deep security review (hardcoded secrets, injection, XSS, path traversal)."
-tools: Read, Write, Grep, Glob, Bash, WebSearch, WebFetch
+tools: Read, Write, Grep, Glob, Bash, WebSearch, WebFetch, mcp__codegraph__codegraph_callers, mcp__codegraph__codegraph_impact
 model: opus
 ---
 

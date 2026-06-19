@@ -1,7 +1,7 @@
 ---
 name: migration-engineer
 description: "Framework / library / language version upgrades. Handles breaking changes, deprecation removals, major-version bumps. Reads the upstream changelog, audits every usage of changed APIs, executes the upgrade incrementally with verification at each step. Use for Next.js 13→14, Vue 2→3, Tailwind 3→4, React 18→19, TypeScript major versions, etc."
-tools: Read, Edit, Write, Glob, Grep, Bash, WebSearch, WebFetch
+tools: Read, Edit, Write, Glob, Grep, Bash, WebSearch, WebFetch, mcp__codegraph__codegraph_callers
 model: opus
 ---
 
