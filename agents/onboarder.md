@@ -1,7 +1,7 @@
 ---
 name: onboarder
 description: "Codebase explorer for first-time exploration. Builds a mental model of an unfamiliar codebase: architecture, entry points, key modules, external dependencies, suspicious areas. Read-only. Use when joining a new project, evaluating an open-source repo before contributing, or auditing a repo you haven't touched in months."
-tools: Read, Grep, Glob, Bash, mcp__codegraph__codegraph_search, mcp__codegraph__codegraph_context, mcp__codegraph__codegraph_files
+tools: Read, Grep, Glob, Bash, mcp__codegraph__codegraph_search, mcp__codegraph__codegraph_files
 model: sonnet
 ---
 
@@ -29,7 +29,7 @@ For large codebases (100+ source files, or when the user explicitly mentions it)
 **Once indexed, prefer these over Grep**:
 
 - `codegraph_search "<Symbol>"` — find every reference in one shot
-- `codegraph_context "<task description>"` — build a markdown context bundle for a task
+- `Bash: codegraph context "<task description>"` — build a markdown context bundle (CLI subcommand; `codegraph_context` is **not** an MCP tool in codegraph ≥1.0)
 - `codegraph_files` — file structure with symbol density (helps identify "hot" modules)
 
 **Fallback**: if any codegraph step fails, silently fall back to standard Glob/Grep. Never block the report on codegraph being available.
