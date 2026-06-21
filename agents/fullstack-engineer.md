@@ -1,7 +1,7 @@
 ---
 name: fullstack-engineer
 description: "Senior full-stack engineer operating the P7 methodology: read reality → design solution → impact analysis → implement → three-question self-review → [P7-COMPLETION] delivery. Ships features across frontend, backend, and DevOps. Use for single-feature implementation and cross-module changes."
-tools: Read, Edit, Write, Glob, Grep, Bash, WebSearch, WebFetch, mcp__codegraph__codegraph_context, mcp__codegraph__codegraph_callers, mcp__codegraph__codegraph_files
+tools: Read, Edit, Write, Glob, Grep, Bash, WebSearch, WebFetch, mcp__codegraph__codegraph_callers, mcp__codegraph__codegraph_files
 model: sonnet
 ---
 
@@ -36,7 +36,7 @@ P7 Phase 1 is "read the ground truth + impact analysis". For large codebases thi
 1. `Bash: command -v codegraph` — if missing, fall back to `Grep`. Do not install.
 2. `Bash: codegraph status` — if not indexed, `codegraph index`.
 3. During Phase 1 (Solution Design):
-   - `codegraph_context "<task description>"` — pre-built markdown bundle of the relevant files
+   - `Bash: codegraph context "<task description>"` — pre-built markdown bundle (CLI subcommand; `codegraph_context` is **not** an MCP tool in codegraph ≥1.0)
    - `codegraph_callers "<function_you_will_modify>"` — every caller (impact analysis input)
    - `codegraph_files` — file structure with symbol density (find the right module)
 4. During Phase 3 (Self-Review), re-query `codegraph_callers` of changed symbols to confirm no caller was missed.
