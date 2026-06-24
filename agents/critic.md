@@ -301,6 +301,27 @@ for path in ["../../../etc/passwd", "..%2F..%2F..%2Fetc%2Fpasswd", "..\\..\\..\\
         print(f"OK: {path!r} blocked")
 ```
 
+## Cross-vendor second opinion (codex-review)
+
+You (Claude critic) and the code under review come from the same model — there's a **same-model blind spot**. On a 🔴 security / destructive finding, or when high-confidence review is requested, run `codex-review` to get an independent vote from Codex (a different vendor / model). This runs **in parallel with § PoC Verification** — they don't replace each other.
+
+### When to run
+- Any 🔴 security / destructive finding (alongside the PoC, not instead of it).
+- The caller / task prompt explicitly asks for high-confidence, dual review, or "並行雙 critic".
+- **Skip it** for purely internal, non-security/destructive changes — a single Claude critic is enough.
+
+### How
+- Default reviews all uncommitted changes: `codex-review` (= `git diff HEAD` + untracked files).
+- Scope to a range / finding: `codex-review --range <rev-range> --focus "<finding>"`, or pipe a diff: `git diff <range> | codex-review --focus "<finding>"`.
+- Read-only sandbox: Codex may read project files as evidence but cannot modify anything.
+- ⚠️ Codex reasons + reads files slowly — give the Bash call a generous timeout (≥5 min).
+- If the `codex` CLI is not on PATH the script exits 3 — fall back cleanly to single-model and still produce the Claude-only report.
+
+### Synthesis
+- Codex output ends with `VERDICT: SAFE|RISKY|BLOCKER (confidence: …)`.
+- Both sides **agree** → high confidence, proceed on the verdict.
+- Sides **disagree** → surface it in the report with both rationales for the caller / Marc to decide — never silently suppress either vote.
+
 ## When NOT to Use (Delegate Instead)
 
 | Scenario | Use instead |

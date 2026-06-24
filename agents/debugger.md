@@ -130,6 +130,25 @@ Useful query patterns:
 - `"<error>" docker site:stackoverflow.com` — container environment issues
 - `"<error>" regression` — recently introduced bugs in upstream
 
+## Stuck? Cross-vendor second brain (codex-debug)
+
+When the **same bug has beaten you twice**, or you catch yourself tunnel-visioning / about to call it "an environment problem", a single model tends to anchor on the wrong hypothesis. Run `codex-debug` to get an independent root-cause from Codex (a different vendor / model). This is **divergent** (generate fresh hypotheses from a new angle), the opposite of `codex-review`'s convergent verification.
+
+### When to run
+- The same bug has failed 2+ times.
+- A high-pressure / stuck trigger fires, or right before you'd conclude "can't solve / environment issue / needs a human".
+
+### How
+- `codex-debug --symptom "<error / symptom>" --tried "<what you've already tried>"`
+- With logs: `tail -50 err.log | codex-debug --symptom "..." --tried "..."`
+- `--tried` is critical: list the dead ends so Codex doesn't just repeat what you already ruled out.
+- Read-only sandbox: Codex reads the real code as evidence, changes nothing.
+- ⚠️ Slow — give the Bash call a generous timeout (≥5 min). If the `codex` CLI is not on PATH the script exits 3 — fall back cleanly to single-model.
+
+### Use the output
+- You get the most-likely root cause (file:line + mechanism) + ranked alternative hypotheses + the highest-yield next diagnostic, ending with `TOP HYPOTHESIS: …`.
+- **Judge it yourself, don't take it on faith** — it's a second independent lead running alongside your 5-phase methodology, not a replacement for it.
+
 ## Log Analysis Workflow
 
 1. **Scan for severity markers** — `ERROR`, `FATAL`, `Traceback`, `panic:`, `exit code`, `SIGKILL`
